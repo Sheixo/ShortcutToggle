@@ -13,6 +13,8 @@ function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = 
     let deferred = null;
     let toggleRegisterFailures = 0;
     let socketConstructorFailures = 0;
+    const requests = [], notifications = [], openedUrls = [];
+    let fetchHandler = async () => ({ ok: true, status: 200, json: async () => [{ tag_name: 'v0.2.0', draft: false, prerelease: true }] });
     class DomSurface {
         constructor() { this.handlers = new Map(); this.hidden = false; }
         addEventListener(type, fn) { if (!this.handlers.has(type)) this.handlers.set(type, new Set()); this.handlers.get(type).add(fn); }
@@ -128,10 +130,14 @@ function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = 
         Date: class extends Date { static now() { return clock; } },
         console: { log() {}, warn() {}, error(...args) { errors.push(args.map(String).join(' ')); } },
         WebSocket: WebSocketMock,
+        AbortController,
+        fetch: (url, options) => { requests.push({ url, options }); return fetchHandler(url, options); },
+        VencordNative: { native: { openExternal: url => { openedUrls.push(url); } } },
         setTimeout: (fn, ms) => timer(fn, ms), clearTimeout: id => timers.delete(id),
         setInterval: (fn, ms) => timer(fn, ms, ms), clearInterval: id => timers.delete(id),
         require(name) {
             if (name === '@api/Settings') return settingsApi;
+            if (name === '@api/Notifications') return { showNotification: async notification => { notifications.push(notification); } };
             if (name === '@components/ErrorBoundary') return { __esModule: true, default: { wrap: c => c } };
             if (name === '@components/settings/tabs/plugins/PluginModalButtons') return { FavoriteButton() {} };
             if (name === '@utils/types') return { __esModule: true, default: p => p, OptionType: { STRING: 1, CUSTOM: 2, BOOLEAN: 3, COMPONENT: 4 } };
@@ -168,6 +174,8 @@ function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = 
     return { plugin, recorder: context.module.exports.__test ?? context.module.exports.recorder, testApi: context.module.exports.__test, render(component) { componentScope = component.name; hookIndex = 0; const tree = component(); componentScope = null; return tree; }, unmount() { for (const cleanup of effectCleanup.values()) cleanup?.(); effectCleanup.clear(); componentHooks.clear(); }, document, window, failNextToggleRegister: () => { toggleRegisterFailures = 1; }, settings: () => settings.store, definition: () => definition, state, native, entries, originals, listeners, calls, writes, sockets, errors, start, tick, fire, press, toggle, latestState, put, releaseDeferred: () => deferred?.resolve(),
         remove(id) { native.inputEventUnregister(id); delete state[id]; emit(); },
         hookUpdates,
+        requests, notifications, openedUrls,
+        setFetchHandler: handler => { fetchHandler = handler; },
         failNextSocket: () => { socketConstructorFailures = 1; },
         patch(id, values) { put({ ...state[id], ...values }); }
     };

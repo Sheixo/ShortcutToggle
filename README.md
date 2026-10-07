@@ -4,7 +4,7 @@
 
 Active ou suspend les raccourcis personnalisés Discord depuis un bouton, un raccourci clavier ou un Stream Deck.
 
-Version **0.2.4** · Interface française · **Discord bureau sous Windows** · Plugin communautaire indépendant.
+Version **0.2.5** · Interface française · **Discord bureau sous Windows** · Plugin communautaire indépendant.
 
 ## Fonctionnalités
 
@@ -19,6 +19,7 @@ Version **0.2.4** · Interface française · **Discord bureau sous Windows** · 
 - Un raccourci désactivé par Discord reste désactivé, y compris après un retour sur ON.
 - Connexion Stream Deck facultative avec état visible, reconnexion automatique et bouton Reconnecter.
 - Diagnostic Stream Deck à la demande : vérification de la réponse du compagnon, résultat daté, dernier contact et aide en cas d’échec, sans basculer ON/OFF.
+- Notification d’une nouvelle version avec lien GitHub, vérification automatique quotidienne désactivable et bouton de vérification manuelle.
 
 ON permet aux raccourcis cochés de fonctionner. OFF suspend leurs actions. Les raccourcis non cochés restent disponibles.
 
@@ -62,6 +63,14 @@ Consulte le [guide Stream Deck](docs/STREAM_DECK.fr.md). Le composant associé *
 Le plugin Vencord fonctionne également avec Stream Deck désactivé. La connexion, lorsqu’elle est activée, utilise uniquement `127.0.0.1:45873` et échange l’état ON/OFF et des commandes de bascule. Aucun compte Discord ni token n’est demandé.
 
 Le bouton **Vérifier la connexion** utilise une connexion temporaire pour attendre le message existant du compagnon et lui transmettre l’état actuel. Il distingue une connexion inaccessible, une réponse compatible absente, une interruption et un échec d’envoi. **Reconnecter** relance la liaison principale. Le compagnon 0.1.2.0 reste compatible et son installateur est inchangé.
+
+## Notifications de mise à jour
+
+La carte **Mises à jour** affiche la version installée. La vérification automatique est activée par défaut : premier contrôle environ vingt secondes après le démarrage, puis au plus une vérification réussie par jour. Une erreur est réessayée après une heure. La date du dernier contrôle réussi et la version trouvée sont conservées entre les redémarrages.
+
+Chaque nouvelle version publiée, préversions incluses, est annoncée une seule fois par notification Vencord. Clique sur la notification ou sur **Ouvrir le téléchargement sur GitHub** pour ouvrir sa publication. Télécharge ensuite `index.tsx`, remplace ton fichier, reconstruis Vencord et redémarre Discord. L’installation reste manuelle.
+
+Tu peux désactiver **Vérifier automatiquement les nouvelles versions** et utiliser **Vérifier les mises à jour** à la demande. La requête consulte les métadonnées publiques des cent publications GitHub les plus récentes de Sheixo/ShortcutToggle, sans compte Discord, token ni cookies. Les liens sont construits uniquement vers ce dépôt. Une erreur réseau conserve l’information précédemment connue et affiche l’heure du dernier contrôle réussi.
 
 ## Développement et vérifications
 

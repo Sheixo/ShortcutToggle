@@ -4,7 +4,7 @@
 
 Enable or suspend selected custom Discord keybinds using a Discord button, a global keyboard shortcut, or a Stream Deck.
 
-**Version 0.2.4** · French settings interface · **Discord desktop on Windows** · Independent community plugin.
+**Version 0.2.5** · French settings interface · **Discord desktop on Windows** · Independent community plugin.
 
 ## Features
 
@@ -19,6 +19,7 @@ Enable or suspend selected custom Discord keybinds using a Discord button, a glo
 - Keybinds disabled in Discord remain disabled, including when ShortcutToggle returns to ON.
 - Optional Stream Deck connection with visible status and automatic/manual reconnection.
 - On-demand Stream Deck diagnostics: check the companion's reply, show the check time and last contact, and display troubleshooting steps without toggling ON/OFF.
+- Notify about a newer version with a GitHub link, optional daily automatic checks and a manual check button.
 
 ON allows selected keybinds to run. OFF suppresses their actions. Unchecked keybinds remain available.
 
@@ -55,6 +56,14 @@ See the [English Stream Deck guide](docs/STREAM_DECK.en.md). The companion **Dis
 The connection uses loopback `127.0.0.1:45873` only, exchanging ON/OFF state and toggle commands. No Discord account or token is requested. Keyboard and Discord-button controls work without the integration.
 
 **Vérifier la connexion** opens a temporary connection, waits for the companion's existing message and sends the current state. It distinguishes unavailable transport, a missing compatible reply, interruption and send failure. **Reconnecter** restarts the main link. Companion 0.1.2.0 remains compatible; its installer is unchanged.
+
+## Update notifications
+
+The **Mises à jour** card shows the installed version. Automatic checking is enabled by default, starts about twenty seconds after startup and reuses successful results for a day across restarts. Failed checks are retried after an hour. Published prereleases are included, and each newer release is announced once using Vencord notifications.
+
+Click the notification or **Ouvrir le téléchargement sur GitHub** to open the release. Download `index.tsx`, replace the file, rebuild Vencord and restart Discord; installation remains manual. Disable **Vérifier automatiquement les nouvelles versions** to stop background checks; the manual check button still works.
+
+The request reads public metadata for the latest one hundred GitHub releases in Sheixo/ShortcutToggle, without Discord credentials, tokens or cookies. Download links are derived only for that repository. Network errors retain the previous result and show the last successful check time.
 
 ## Development
 

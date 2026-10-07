@@ -74,3 +74,16 @@ Essai conseillé : enregistrer temporairement la même touche qu’un raccourci 
 Ces tests utilisent des WebSockets et modules Discord simulés. La compilation complète de Vencord et le test du diagnostic dans Discord avec l’application Stream Deck réelle n’ont pas été effectués pour 0.2.4. Le diagnostic vérifie un échange compatible et l’envoi de l’état ; il ne confirme pas à lui seul le fonctionnement de la touche physique.
 
 Essai conseillé : lancer la vérification avec Stream Deck ouvert, fermer Stream Deck et refaire le test, puis le relancer et vérifier la reconnexion et le bouton physique. Le test doit conserver l’état ON/OFF et la sélection des raccourcis.
+
+## Mise à jour 0.2.5 — notification de nouvelle version
+
+- Compilation du TSX complet et 203 vérifications simulées réussies : les 159 précédentes et 44 vérifications de mise à jour.
+- Comparaison des versions numériques, préversions, identifiants numériques longs, métadonnées de construction, tags invalides et publications en brouillon.
+- Notification unique, cache entre redémarrages, vérification quotidienne, désactivation de l’automatisme, vérification manuelle et nouvelle notification pour une nouvelle version ; une publication inférieure à une version déjà annoncée ne provoque pas une nouvelle alerte.
+- Lien de la carte et de la notification restreint au dépôt, refus des URL/titres fournis par l’API, requête sans credentials, cookies ou données Discord.
+- Erreurs HTTP/réseau/JSON, délai de dix secondes, clics répétés, réponses tardives, arrêt/redémarrage, réactivation pendant une requête et horodatage futur invalide.
+- Maintien de ON/OFF et de la sélection ; les vérifications consultent uniquement les métadonnées des publications et n’installent aucun code.
+
+Les réponses réseau et notifications sont simulées dans ces tests. La collection publique réelle de publications GitHub a été consultée pour confirmer la présence des tags et préversions existants. La requête depuis le vrai client Discord, l’affichage/clic de la notification Vencord et la compilation complète de Vencord n’ont pas été testés pour 0.2.5.
+
+Essai conseillé après installation : cliquer sur **Vérifier les mises à jour** et vérifier l’état « Aucune version plus récente disponible » pour 0.2.5, puis essayer avec la vérification automatique désactivée. Une notification réelle de nouveauté pourra être vérifiée après la publication d’une version supérieure.

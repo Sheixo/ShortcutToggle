@@ -2,12 +2,258 @@
  * ShortcutToggle — Copyright (c) 2026 Ethan
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+import { showNotification } from "@api/Notifications";
 import { definePluginSettings, useSettings } from "@api/Settings";
 import { FavoriteButton } from "@components/settings/tabs/plugins/PluginModalButtons";
 import ErrorBoundary from "@components/ErrorBoundary";
 import definePlugin, { OptionType } from "@utils/types";
 import { findByProps, findComponentByCodeLazy } from "@webpack";
 import { Checkbox, showToast, useEffect, useState } from "@webpack/common";
+const PLUGIN_VERSION = "0.2.5";
+const UPDATE_API_URL = "https://api.github.com/repos/Sheixo/ShortcutToggle/releases?per_page=100";
+const UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
+const UPDATE_RETRY_INTERVAL = 60 * 60 * 1000;
+type ParsedReleaseVersion = {
+    numbers: number[];
+    prerelease: string[];
+};
+type UpdateRelease = {
+    tag: string;
+    version: string;
+    prerelease: boolean;
+    url: string;
+};
+type UpdateCheckView = {
+    status: "idle" | "checking" | "current" | "available" | "error";
+    latest: UpdateRelease | null;
+    checkedAt: number | null;
+    error: string;
+};
+let updateCheckView: UpdateCheckView = { status: "idle", latest: null, checkedAt: null, error: "" };
+const updateCheckListeners = new Set<(view: UpdateCheckView) => void>();
+let updateCheckTimer: ReturnType<typeof setTimeout> | null = null;
+let updateScheduleToken = 0;
+let updateRequest: {
+    controller: AbortController;
+    timer: ReturnType<typeof setTimeout> | null;
+    automatic: boolean;
+} | null = null;
+let lastUpdateAttemptAt: number | null = null;
+function parseReleaseVersion(version: string): ParsedReleaseVersion | null {
+    const match = /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/.exec(version);
+    if (!match)
+        return null;
+    const numbers = match.slice(1, 4).map(Number);
+    const prerelease = match[4]?.split(".") ?? [];
+    if (numbers.some(number => !Number.isSafeInteger(number))
+        || prerelease.some(part => /^\d+$/.test(part) && part.length > 1 && part.startsWith("0")))
+        return null;
+    return { numbers, prerelease };
+}
+function compareReleaseVersions(left: string, right: string): number | null {
+    const a = parseReleaseVersion(left), b = parseReleaseVersion(right);
+    if (!a || !b)
+        return null;
+    for (let index = 0; index < 3; index++) {
+        if (a.numbers[index] !== b.numbers[index])
+            return a.numbers[index] > b.numbers[index] ? 1 : -1;
+    }
+    if (!a.prerelease.length || !b.prerelease.length)
+        return Number(!a.prerelease.length) - Number(!b.prerelease.length);
+    for (let index = 0; index < Math.max(a.prerelease.length, b.prerelease.length); index++) {
+        const x = a.prerelease[index], y = b.prerelease[index];
+        if (x === y)
+            continue;
+        if (x === undefined || y === undefined)
+            return x === undefined ? -1 : 1;
+        const xNumeric = /^\d+$/.test(x), yNumeric = /^\d+$/.test(y);
+        if (xNumeric !== yNumeric)
+            return xNumeric ? -1 : 1;
+        if (xNumeric && x.length !== y.length)
+            return x.length > y.length ? 1 : -1;
+        return x > y ? 1 : -1;
+    }
+    return 0;
+}
+function releaseFromTag(tag: unknown, prerelease: unknown): UpdateRelease | null {
+    if (typeof tag !== "string" || tag.length > 128 || !parseReleaseVersion(tag))
+        return null;
+    return { tag, version: tag.replace(/^v/, ""), prerelease: prerelease === true,
+        url: `https://github.com/Sheixo/ShortcutToggle/releases/tag/${encodeURIComponent(tag)}` };
+}
+function latestPublishedRelease(data: unknown): UpdateRelease | null {
+    if (!Array.isArray(data))
+        return null;
+    let latest: UpdateRelease | null = null;
+    for (const release of data) {
+        if (!release || release.draft !== false)
+            continue;
+        const candidate = releaseFromTag(release.tag_name, release.prerelease);
+        if (candidate && (!latest || compareReleaseVersions(candidate.version, latest.version) === 1))
+            latest = candidate;
+    }
+    return latest;
+}
+function getUpdateCheckView(): UpdateCheckView {
+    return { ...updateCheckView, latest: updateCheckView.latest ? { ...updateCheckView.latest } : null };
+}
+function notifyUpdateCheck(view: UpdateCheckView) {
+    updateCheckView = view;
+    for (const listener of updateCheckListeners) {
+        try {
+            listener(getUpdateCheckView());
+        }
+        catch { }
+    }
+}
+function cachedUpdateView(): UpdateCheckView {
+    const saved = settings.store.latestUpdateRelease;
+    const latest = releaseFromTag(saved?.tag, saved?.prerelease);
+    const time = Number(settings.store.lastUpdateCheckAt);
+    const checkedAt = latest && Number.isFinite(time) && time > 0 && time <= Date.now() ? time : null;
+    return { status: !latest ? "idle" : compareReleaseVersions(latest.version, PLUGIN_VERSION) === 1 ? "available" : "current",
+        latest, checkedAt, error: "" };
+}
+function openUpdateRelease(release: UpdateRelease) {
+    // Rebuild the URL from a validated tag; do not open API-provided URLs.
+    const safe = releaseFromTag(release.tag, release.prerelease);
+    if (safe)
+        VencordNative.native.openExternal(safe.url);
+}
+function notifyNewRelease(release: UpdateRelease) {
+    const previouslyNotified = settings.store.lastNotifiedRelease;
+    const notificationOrder = typeof previouslyNotified === "string" ? compareReleaseVersions(release.version, previouslyNotified) : null;
+    if (compareReleaseVersions(release.version, PLUGIN_VERSION) !== 1 || (notificationOrder !== null && notificationOrder <= 0))
+        return;
+    settings.store.lastNotifiedRelease = release.tag;
+    const failed = () => {
+        if (settings.store.lastNotifiedRelease === release.tag)
+            settings.store.lastNotifiedRelease = previouslyNotified;
+    };
+    try {
+        void showNotification({ title: "Mise à jour de ShortcutToggle",
+            body: `La version ${release.version}${release.prerelease ? " (préversion)" : ""} est disponible. Clique pour ouvrir son téléchargement sur GitHub.`,
+            onClick: () => openUpdateRelease(release) }).catch(failed);
+    }
+    catch {
+        failed();
+    }
+}
+function cancelUpdateRequest() {
+    const request = updateRequest;
+    updateRequest = null;
+    if (!request)
+        return;
+    if (request.timer !== null)
+        clearTimeout(request.timer);
+    request.controller.abort();
+}
+async function checkForUpdates(automatic = false) {
+    if (!running || updateRequest || (automatic && !settings.store.updateNotificationsEnabled))
+        return;
+    const cached = cachedUpdateView();
+    if (automatic && ((cached.checkedAt !== null && Date.now() - cached.checkedAt < UPDATE_INTERVAL)
+        || (updateCheckView.status === "error" && lastUpdateAttemptAt !== null && Date.now() - lastUpdateAttemptAt < UPDATE_RETRY_INTERVAL)))
+        return;
+    const token = generation;
+    const request = { controller: new AbortController(), timer: null as ReturnType<typeof setTimeout> | null, automatic };
+    updateRequest = request;
+    lastUpdateAttemptAt = Date.now();
+    const active = () => running && generation === token && updateRequest === request
+        && (!automatic || settings.store.updateNotificationsEnabled);
+    notifyUpdateCheck({ ...getUpdateCheckView(), status: "checking", error: "" });
+    try {
+        const timeout = new Promise<never>((_resolve, reject) => {
+            request.timer = setTimeout(() => {
+                request.controller.abort();
+                reject(new Error("La vérification a dépassé dix secondes. Réessaie plus tard."));
+            }, 10000);
+        });
+        const operation = (async () => {
+            const response = await fetch(UPDATE_API_URL, { headers: { Accept: "application/vnd.github+json" },
+                credentials: "omit", referrerPolicy: "no-referrer", signal: request.controller.signal });
+            if (!response.ok) {
+                if (response.status === 403 || response.status === 429)
+                    throw new Error("GitHub refuse la vérification pour le moment. Réessaie plus tard.");
+                throw new Error("Impossible de consulter les versions sur GitHub. Réessaie plus tard.");
+            }
+            const latest = latestPublishedRelease(await response.json());
+            if (!latest)
+                throw new Error("Aucune version reconnue dans la réponse de GitHub.");
+            return latest;
+        })();
+        const latest = await Promise.race([operation, timeout]);
+        if (!active())
+            return;
+        const checkedAt = Date.now();
+        settings.store.latestUpdateRelease = latest;
+        settings.store.lastUpdateCheckAt = checkedAt;
+        const available = compareReleaseVersions(latest.version, PLUGIN_VERSION) === 1;
+        notifyUpdateCheck({ status: available ? "available" : "current", latest, checkedAt, error: "" });
+        if (available)
+            notifyNewRelease(latest);
+    }
+    catch (error) {
+        if (active())
+            notifyUpdateCheck({ ...getUpdateCheckView(), status: "error",
+                error: error instanceof Error && error.message.startsWith("GitHub") ? error.message
+                    : error instanceof Error && (error.message.startsWith("Aucune version") || error.message.startsWith("La vérification")) ? error.message
+                        : "Vérification impossible. Vérifie ta connexion Internet, puis réessaie." });
+    }
+    finally {
+        if (request.timer !== null)
+            clearTimeout(request.timer);
+        request.controller.abort();
+        if (updateRequest === request)
+            updateRequest = null;
+    }
+}
+function scheduleUpdateCheck(delay: number) {
+    if (updateCheckTimer !== null)
+        clearTimeout(updateCheckTimer);
+    const scheduleToken = ++updateScheduleToken, lifecycleToken = generation;
+    updateCheckTimer = setTimeout(async () => {
+        if (!running || lifecycleToken !== generation || scheduleToken !== updateScheduleToken || !settings.store.updateNotificationsEnabled)
+            return;
+        updateCheckTimer = null;
+        await checkForUpdates(true);
+        if (running && lifecycleToken === generation && scheduleToken === updateScheduleToken && settings.store.updateNotificationsEnabled)
+            scheduleUpdateCheck(updateRequest || updateCheckView.status === "error" ? UPDATE_RETRY_INTERVAL : UPDATE_INTERVAL);
+    }, delay);
+}
+function updateVersionCheckSchedule() {
+    updateScheduleToken++;
+    if (updateCheckTimer !== null)
+        clearTimeout(updateCheckTimer);
+    updateCheckTimer = null;
+    if (!running)
+        return;
+    if (!settings.store.updateNotificationsEnabled) {
+        if (updateRequest?.automatic) {
+            cancelUpdateRequest();
+            notifyUpdateCheck(cachedUpdateView());
+        }
+        return;
+    }
+    const cached = cachedUpdateView();
+    if (cached.status === "available" && cached.latest)
+        notifyNewRelease(cached.latest);
+    const delay = cached.checkedAt === null ? 20000 : Math.max(20000, UPDATE_INTERVAL - (Date.now() - cached.checkedAt));
+    scheduleUpdateCheck(delay);
+}
+function startUpdateChecks() {
+    lastUpdateAttemptAt = null;
+    notifyUpdateCheck(cachedUpdateView());
+    updateVersionCheckSchedule();
+}
+function stopUpdateChecks() {
+    updateScheduleToken++;
+    if (updateCheckTimer !== null)
+        clearTimeout(updateCheckTimer);
+    updateCheckTimer = null;
+    cancelUpdateRequest();
+    notifyUpdateCheck({ status: "idle", latest: null, checkedAt: null, error: "" });
+}
 /* =========================================================
  * TYPES
  * ======================================================= */
@@ -33,6 +279,16 @@ const settings = definePluginSettings({
         hidden: true,
         onChange: scheduleSelectedKeybindRefresh
     },
+    updateNotificationsEnabled: {
+        type: OptionType.BOOLEAN,
+        default: true,
+        hidden: true,
+        description: "Vérifier automatiquement les nouvelles versions sur GitHub.",
+        onChange: updateVersionCheckSchedule
+    },
+    lastUpdateCheckAt: { type: OptionType.CUSTOM, default: 0 },
+    latestUpdateRelease: { type: OptionType.CUSTOM, default: null as UpdateRelease | null },
+    lastNotifiedRelease: { type: OptionType.CUSTOM, default: "" },
     streamDeckEnabled: {
         type: OptionType.BOOLEAN,
         description: "Activer la connexion Stream Deck sur cet ordinateur.",
@@ -690,13 +946,50 @@ function StreamDeckSettings() {
         </details>
     </section>;
 }
+function UpdateSettings() {
+    const { updateNotificationsEnabled } = settings.use(["updateNotificationsEnabled"]);
+    const [view, setView] = useState(getUpdateCheckView);
+    useEffect(() => {
+        updateCheckListeners.add(setView);
+        setView(getUpdateCheckView());
+        return () => { updateCheckListeners.delete(setView); };
+    }, []);
+    const available = view.latest !== null && compareReleaseVersions(view.latest.version, PLUGIN_VERSION) === 1;
+    return <section style={UI.card} aria-label="Mises à jour de ShortcutToggle">
+        <div style={UI.row}>
+            <h3 style={UI.title}>Mises à jour</h3>
+            <span style={{ ...UI.badge, color: "var(--text-muted)", background: "var(--background-tertiary)" }}>Version installée : {PLUGIN_VERSION}</span>
+        </div>
+        <div style={{ marginTop: 14 }}><Checkbox value={updateNotificationsEnabled} onChange={() => { settings.store.updateNotificationsEnabled = !updateNotificationsEnabled; }}>
+            Vérifier automatiquement les nouvelles versions
+        </Checkbox></div>
+        <p style={UI.muted}>Consulte les publications publiques de Sheixo/ShortcutToggle sur GitHub, préversions incluses.
+            La vérification automatique est quotidienne ; chaque nouvelle version est annoncée une seule fois.</p>
+        <button type="button" style={{ ...UI.button, marginTop: 12 }} disabled={!running || view.status === "checking"} onClick={() => { void checkForUpdates(); }}>
+            {view.status === "checking" ? "Vérification…" : "Vérifier les mises à jour"}</button>
+        <div role="status" aria-live="polite" aria-atomic="true" style={{ marginTop: 10 }}>
+            {view.status === "checking" && <p style={UI.muted}>Recherche des nouvelles versions…</p>}
+            {view.status === "current" && <p style={UI.muted}>Aucune version plus récente disponible.</p>}
+            {view.status === "idle" && <p style={UI.muted}>Lance une vérification pour consulter les versions disponibles.</p>}
+            {view.status === "error" && <p style={{ ...UI.muted, color: "var(--text-danger)" }}>{view.error}</p>}
+            {view.checkedAt !== null && <p style={UI.muted}>Dernière vérification réussie : {new Date(view.checkedAt).toLocaleString("fr-FR")}.</p>}
+            {available && view.latest && <div style={{ marginTop: 12, padding: "12px 14px", borderRadius: 8,
+                border: "1px solid var(--brand-500, #5865f2)", background: "var(--background-primary)" }}>
+                <p style={{ ...UI.muted, marginTop: 0, color: "var(--text-normal)", fontWeight: 600 }}>Nouvelle version disponible : {view.latest.version}{view.latest.prerelease ? " (préversion)" : ""}</p>
+                <button type="button" style={{ ...UI.primary, marginTop: 10 }} onClick={() => openUpdateRelease(view.latest!)}>Ouvrir le téléchargement sur GitHub</button>
+                <p style={UI.muted}>Télécharge le nouveau index.tsx, remplace ton fichier, reconstruis Vencord puis redémarre Discord.</p>
+            </div>}
+        </div>
+    </section>;
+}
 function ShortcutSettings() {
     return <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         <ShortcutStatus />
         <ShortcutRecorder />
         <KeybindSelector />
         <StreamDeckSettings />
-        <p style={{ ...UI.muted, marginTop: 0, textAlign: "center" }}>ShortcutToggle 0.2.4 · Discord bureau · Windows</p>
+        <UpdateSettings />
+        <p style={{ ...UI.muted, marginTop: 0, textAlign: "center" }}>ShortcutToggle {PLUGIN_VERSION} · Discord bureau · Windows</p>
     </div>;
 }
 /* =========================================================
@@ -1751,6 +2044,7 @@ export default definePlugin({
         generation++;
         initialiseStreamDeckPreference();
         updateStreamDeckConnection();
+        startUpdateChecks();
         let attempts = 0;
         initTimer = setInterval(() => {
             if (!running)
@@ -1776,6 +2070,7 @@ export default definePlugin({
         shortcutSuppressUntil = 0;
         running = false;
         generation++;
+        stopUpdateChecks();
         if (initTimer)
             clearInterval(initTimer);
         if (shortcutWatchTimer)

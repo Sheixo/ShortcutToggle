@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.5 — 2026-10-07
+
+- Add a settings card and Vencord notification for a newer published version, with a link to its GitHub release and manual installation instructions.
+- Include published prereleases, compare semantic versions and ignore drafts, invalid tags and API-provided links/text.
+- Check automatically after startup, reuse successful checks for a day and retry failures after an hour; offer an automatic-check toggle and manual checking.
+- Persist the known release and last successful check, notify once per release and cancel stale requests/schedules on disable or stop.
+- Limit requests to public GitHub release metadata without credentials/cookies, with a ten-second timeout and user-facing failure messages.
+- Add 44 update/version/notification checks. TSX compilation and all 203 simulated checks pass.
+
 ## 0.2.4 — 2026-10-07
 
 - Add an on-demand Stream Deck diagnostic using a temporary connection and the companion's existing getState message, without toggling ON/OFF or interrupting the main link.

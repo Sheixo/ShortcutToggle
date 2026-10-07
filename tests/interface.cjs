@@ -31,7 +31,7 @@ async function main(code) {
     await r.start(); const api = r.testApi;
     assert.equal(r.settings().streamDeckEnabled, true); assert.equal(r.sockets.length, 1); checks++;
     const root = r.render(api.ShortcutSettings);
-    assert.equal(elements(root, el => typeof el.type === 'function').length, 4); checks++;
+    assert.equal(elements(root, el => typeof el.type === 'function').length, 5); checks++;
     let status = r.render(api.ShortcutStatus); assert.match(text(status), /ON/);
     button(status, 'Désactiver').props.onClick();
     status = r.render(api.ShortcutStatus); assert.match(text(status), /OFF/); checks++;
