@@ -1,0 +1,7 @@
+node_modules/
+.test-cache/
+*.log
+*.js.map
+.env*
+stream-deck/fr.ethan.discord-shortcuts.sdPlugin/logs/
+.DS_Store

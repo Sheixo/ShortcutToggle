@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+  "UUID": "fr.ethan.discord-shortcuts",
+  "Name": "Discord Shortcuts",
+  "Category": "Discord Shortcuts",
+  "CategoryIcon": "imgs/category",
+  "Version": "0.1.2.0",
+  "Author": "ethanXsheixo",
+  "Description": "Active ou désactive les raccourcis Discord",
+  "CodePath": "bin/plugin.js",
+  "SDKVersion": 3,
+  "Nodejs": {
+    "Version": "24"
+  },
+  "Software": {
+    "MinimumVersion": "7.1"
+  },
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "Icon": "imgs/plugin",
+  "Actions": [
+    {
+      "UUID": "fr.ethan.discord-shortcuts.toggle",
+      "Name": "Raccourcis Clavier Discord",
+      "Icon": "imgs/action",
+      "Controllers": [
+        "Keypad"
+      ],
+      "DisableAutomaticStates": true,
+      "DisableCaching": true,
+      "States": [
+        {
+          "Image": "imgs/on",
+          "Title": ""
+        },
+        {
+          "Image": "imgs/off",
+          "Title": ""
+        }
+      ]
+    }
+  ]
+}

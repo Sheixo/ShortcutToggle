@@ -1,0 +1,19 @@
+{
+  "name": "shortcut-toggle",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Optional global control of custom Discord keybinds for Vencord on Windows",
+  "license": "GPL-3.0-or-later",
+  "author": "Ethan",
+  "scripts": {
+    "test": "node tests/run.cjs",
+    "typecheck": "node scripts/typecheck.cjs",
+    "build:streamdeck": "npm --prefix stream-deck run build"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
