@@ -1516,7 +1516,7 @@ export default definePlugin({
     authors: [
         {
             name: "Ethan",
-            id: 0n
+            id: 942412303800893440n
         }
     ],
     // Unified settings panel.

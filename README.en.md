@@ -4,7 +4,7 @@
 
 Enable or suspend selected custom Discord keybinds using a Discord button, a global keyboard shortcut, or a Stream Deck.
 
-**Version 0.2.0** · French settings interface · **Discord desktop on Windows** · Independent community plugin.
+**Version 0.2.1** · French settings interface · **Discord desktop on Windows** · Independent community plugin.
 
 ## Features
 

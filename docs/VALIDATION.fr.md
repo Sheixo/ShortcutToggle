@@ -29,3 +29,9 @@ Le composant Stream Deck conserve le code et le protocole de la version personne
 5. Activer/désactiver Stream Deck et vérifier l’état, le bouton physique et la reconnexion après fermeture/réouverture de son application.
 
 Le dossier correspond à la publication indépendante [Sheixo/ShortcutToggle](https://github.com/Sheixo/ShortcutToggle). Les essais dans Discord et Stream Deck restent à effectuer après installation.
+
+## Mise à jour 0.2.1 — profil auteur
+
+L’entrée Authors utilise désormais l’identifiant Discord fourni par le créateur. Vencord peut ainsi récupérer son avatar et ouvrir son profil réel.
+
+Cette correction porte sur les métadonnées de l’auteur. Les vérifications de compilation et les 85 tests simulés décrits ci-dessus concernent la préparation 0.2.0 ; ils n’ont pas été relancés pour cette modification de métadonnées. L’affichage du profil reste à vérifier dans Discord après reconstruction et redémarrage.

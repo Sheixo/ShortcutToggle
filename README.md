@@ -4,7 +4,7 @@
 
 Active ou suspend les raccourcis personnalisés Discord depuis un bouton, un raccourci clavier ou un Stream Deck.
 
-Version **0.2.0** · Interface française · **Discord bureau sous Windows** · Plugin communautaire indépendant.
+Version **0.2.1** · Interface française · **Discord bureau sous Windows** · Plugin communautaire indépendant.
 
 ## Fonctionnalités
 

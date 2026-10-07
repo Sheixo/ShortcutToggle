@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 — 2026-10-07
+
+- Link the Authors entry to the creator’s real Discord profile so Vencord can display its avatar and open that profile.
+
 ## 0.2.0 — 2026-10-07
 
 - Unified settings interface with ON/OFF status, hotkey keycaps and selection counts.
