@@ -35,3 +35,14 @@ Le dossier correspond à la publication indépendante [Sheixo/ShortcutToggle](ht
 L’entrée Authors utilise désormais l’identifiant Discord fourni par le créateur. Vencord peut ainsi récupérer son avatar et ouvrir son profil réel.
 
 Cette correction porte sur les métadonnées de l’auteur. Les vérifications de compilation et les 85 tests simulés décrits ci-dessus concernent la préparation 0.2.0 ; ils n’ont pas été relancés pour cette modification de métadonnées. L’affichage du profil reste à vérifier dans Discord après reconstruction et redémarrage.
+
+## Mise à jour 0.2.2 — favoris Vencord
+
+La première carte des paramètres réutilise le composant FavoriteButton de Vencord et son réglage partagé `plugins.ShortcutToggle.isFavorite`. Le tri et le filtre des favoris Vencord utilisent ce même réglage ; Vencord assure son enregistrement.
+
+- Compilation du TSX complet et 85 vérifications simulées relancées avec succès.
+- Vérification du bouton issu des composants du plugin : ajout/retrait du favori, conservation après un arrêt/redémarrage simulé, maintien de la sélection des raccourcis et de l’état OFF durant la bascule du favori.
+- Régénération de l’aperçu interactif ; ses contrôles Vencord sont simulés.
+- Comparaison des fichiers préparés et publiés et vérification de chaque fichier du paquet ZIP.
+
+La construction des six composants Vencord mentionnée pour 0.2.0 n’a pas été relancée pour 0.2.2. L’affichage de l’étoile, le tri dans la vraie liste et la conservation après redémarrage de Discord restent à vérifier dans une session Discord réelle.

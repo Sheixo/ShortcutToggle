@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2 — 2026-10-07
+
+- Add Vencord’s native Favorite button beside the ShortcutToggle title in its first settings card.
+- Use Vencord’s shared favorite preference to support sorting, the Favorites filter and persistence.
+- Keep the plugin classified as a userplugin and retain its real Discord author profile.
+- Refresh the interactive preview and rerun full TSX compilation and 85 simulated checks.
+
 ## 0.2.1 — 2026-10-07
 
 - Link the Authors entry to the creator’s real Discord profile so Vencord can display its avatar and open that profile.

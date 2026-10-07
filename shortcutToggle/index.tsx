@@ -2,7 +2,8 @@
  * ShortcutToggle — Copyright (c) 2026 Ethan
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-import { definePluginSettings } from "@api/Settings";
+import { definePluginSettings, useSettings } from "@api/Settings";
+import { FavoriteButton } from "@components/settings/tabs/plugins/PluginModalButtons";
 import ErrorBoundary from "@components/ErrorBoundary";
 import definePlugin, { OptionType } from "@utils/types";
 import { findByProps, findComponentByCodeLazy } from "@webpack";
@@ -440,6 +441,7 @@ function Keycaps({ text }: {
     </span>;
 }
 function ShortcutStatus() {
+    const pluginPreferences = useSettings(["plugins.ShortcutToggle.isFavorite"]).plugins.ShortcutToggle;
     settings.use(["selectedKeybindIds"]);
     useKeybindList();
     const [status, setStatus] = useState({ disabled, ready: initialized && running });
@@ -460,6 +462,7 @@ function ShortcutStatus() {
                     <span style={{ ...UI.badge, color, background: "var(--background-tertiary)" }} role="status" aria-live="polite">
                         <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: "50%", background: color }}/>{label}
                     </span>
+                    <FavoriteButton isFavorite={pluginPreferences.isFavorite ?? false} onClick={() => { pluginPreferences.isFavorite = !pluginPreferences.isFavorite; }}/>
                 </div>
                 <p style={UI.muted}>{!status.ready ? "Préparation des raccourcis Discord…"
             : status.disabled ? "Les raccourcis cochés sont suspendus." : "Les raccourcis cochés peuvent fonctionner."}</p>
@@ -600,7 +603,7 @@ function ShortcutSettings() {
         <ShortcutRecorder />
         <KeybindSelector />
         <StreamDeckSettings />
-        <p style={{ ...UI.muted, marginTop: 0, textAlign: "center" }}>ShortcutToggle 0.2.0 · Discord bureau · Windows</p>
+        <p style={{ ...UI.muted, marginTop: 0, textAlign: "center" }}>ShortcutToggle 0.2.2 · Discord bureau · Windows</p>
     </div>;
 }
 /* =========================================================

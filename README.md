@@ -4,11 +4,12 @@
 
 Active ou suspend les raccourcis personnalisés Discord depuis un bouton, un raccourci clavier ou un Stream Deck.
 
-Version **0.2.1** · Interface française · **Discord bureau sous Windows** · Plugin communautaire indépendant.
+Version **0.2.2** · Interface française · **Discord bureau sous Windows** · Plugin communautaire indépendant.
 
 ## Fonctionnalités
 
 - État ON/OFF visible dans les paramètres et bouton dans le panneau micro/casque de Discord.
+- Étoile Favori dans la première carte des paramètres : épingle ShortcutToggle en haut de la liste Vencord et mémorise ce choix.
 - Enregistrement du raccourci global par pression des touches, avec Échap pour annuler et réinitialisation à F13.
 - Recherche par touche ou action, sélection par lots et compteurs.
 - Quand une recherche est active, les boutons de sélection agissent seulement sur ses résultats.
@@ -42,6 +43,7 @@ Lors d’une installation neuve, les raccourcis personnalisés existants sont s�
 
 ## Utilisation
 
+- **Favori** : clique sur l’étoile à côté du titre ShortcutToggle dans la première carte des paramètres. Elle devient jaune et le plugin rejoint les favoris Vencord ; clique de nouveau pour le retirer.
 - **Enregistrer un raccourci** : presse une touche ou une touche avec Ctrl, Maj, Alt ou Windows, puis relâche toutes les touches.
 - Les lettres, chiffres, touches F1 à F24, touches de navigation et principales touches du pavé numérique sont prises en charge. Les modificateurs droits sont distingués.
 - Échap, la perte de focus de la fenêtre ou la fermeture des paramètres annulent l’enregistrement.

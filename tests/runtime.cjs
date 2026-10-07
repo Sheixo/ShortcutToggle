@@ -91,6 +91,8 @@ function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = 
         if (!effectCleanup.has(key)) effectCleanup.set(key, effect());
     };
     const settingsApi = {
+        Settings: { plugins: {} },
+        useSettings() { return settingsApi.Settings; },
         definePluginSettings(def) {
             definition = def;
             const plain = Object.fromEntries(Object.entries(def).filter(([, value]) => 'default' in value).map(([key, value]) => [key, structuredClone(value.default)]));
@@ -103,7 +105,11 @@ function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = 
     };
     let settings;
     const originalDefine = settingsApi.definePluginSettings;
-    settingsApi.definePluginSettings = def => (settings = originalDefine(def));
+    settingsApi.definePluginSettings = def => {
+        settings = originalDefine(def);
+        settingsApi.Settings.plugins.ShortcutToggle = settings.store;
+        return settings;
+    };
     class WebSocketMock {
         static OPEN = 1;
         static CONNECTING = 0;
@@ -122,6 +128,7 @@ function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = 
         require(name) {
             if (name === '@api/Settings') return settingsApi;
             if (name === '@components/ErrorBoundary') return { __esModule: true, default: { wrap: c => c } };
+            if (name === '@components/settings/tabs/plugins/PluginModalButtons') return { FavoriteButton() {} };
             if (name === '@utils/types') return { __esModule: true, default: p => p, OptionType: { STRING: 1, CUSTOM: 2, BOOLEAN: 3, COMPONENT: 4 } };
             if (name === '@webpack') return { findComponentByCodeLazy: () => () => {}, findByProps: (...props) => props[0] === 'getKeybindForAction' ? storeModule : props[0] === 'addKeybind' ? actions : native };
             if (name === '@webpack/common') return { Checkbox() {}, Forms: {}, showToast() {}, Toasts: { Type: { SUCCESS: 1, FAILURE: 0 } }, useEffect: useEffectMock, useState: useStateMock };

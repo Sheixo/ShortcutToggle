@@ -4,11 +4,12 @@
 
 Enable or suspend selected custom Discord keybinds using a Discord button, a global keyboard shortcut, or a Stream Deck.
 
-**Version 0.2.1** · French settings interface · **Discord desktop on Windows** · Independent community plugin.
+**Version 0.2.2** · French settings interface · **Discord desktop on Windows** · Independent community plugin.
 
 ## Features
 
 - Visible ON/OFF status and a button next to Discord’s microphone/headphone controls.
+- A favorite star in the first settings card pins ShortcutToggle to the top of Vencord’s plugin list and remembers that preference.
 - Record a global hotkey by pressing and releasing keys. Escape cancels; a reset button restores F13.
 - Search keybinds by key or action, select them in bulk, and view selection counts.
 - Bulk actions affect only search results when a filter is active; their labels reflect this scope.
