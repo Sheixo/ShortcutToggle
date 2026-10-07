@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144">
+  <rect width="144" height="144" rx="18" fill="#171b22"/>
+  <rect x="34" y="43" width="76" height="48" rx="7" fill="none" stroke="#8c96a6" stroke-width="4"/>
+  <path d="M46 56h8m8 0h8m8 0h8m8 0h5M46 69h8m8 0h8m8 0h8m-33 11h38" stroke="#8c96a6" stroke-width="4" stroke-linecap="round"/>
+  <path d="M43 99l58-65" stroke="#171b22" stroke-width="12"/>
+  <path d="M43 99l58-65" stroke="#e5a64b" stroke-width="5" stroke-linecap="round"/>
+  <text x="72" y="24" fill="#adb5c4" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="bold">DISCORD</text>
+</svg>

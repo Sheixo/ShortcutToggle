@@ -9,7 +9,7 @@ import ErrorBoundary from "@components/ErrorBoundary";
 import definePlugin, { OptionType } from "@utils/types";
 import { findByProps, findComponentByCodeLazy } from "@webpack";
 import { Checkbox, showToast, useEffect, useState } from "@webpack/common";
-const PLUGIN_VERSION = "0.2.5";
+const PLUGIN_VERSION = "0.2.6";
 const UPDATE_API_URL = "https://api.github.com/repos/Sheixo/ShortcutToggle/releases?per_page=100";
 const UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const UPDATE_RETRY_INTERVAL = 60 * 60 * 1000;
@@ -1246,8 +1246,17 @@ function checkStreamDeckConnection() {
     try {
         const socket = new WebSocket(STREAM_DECK_URL);
         check.socket = socket;
-        socket.onopen = () => { if (active())
-            opened = true; };
+        socket.onopen = () => {
+            if (!active())
+                return;
+            opened = true;
+            try {
+                socket.send(JSON.stringify({ type: "hello", role: "diagnostic", protocolVersion: 1 }));
+            }
+            catch {
+                finish("sendFailed");
+            }
+        };
         socket.onmessage = event => {
             if (!active() || socket.readyState !== WebSocket.OPEN)
                 return;
@@ -1334,6 +1343,13 @@ function connectStreamDeck() {
             clearStreamDeckConnectTimeout();
             streamDeckDiagnostics.lastConnectedAt = Date.now();
             setStreamDeckStatus("connected");
+            try {
+                socket.send(JSON.stringify({ type: "hello", role: "control", protocolVersion: 1 }));
+            }
+            catch {
+                failed();
+                return;
+            }
             sendStreamDeckState();
         };
         socket.onmessage = event => {

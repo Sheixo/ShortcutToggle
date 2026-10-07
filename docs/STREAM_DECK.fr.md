@@ -2,6 +2,8 @@
 
 Le composant Stream Deck est facultatif. Il fournit le bouton qui commande ShortcutToggle et affiche son état ON/OFF.
 
+Cette publication associe **ShortcutToggle 0.2.6** à **Discord Shortcuts 0.1.3.0**. Mets à jour le fichier `index.tsx`, reconstruis Vencord, redémarre Discord et ouvre le nouvel installateur Stream Deck pour bénéficier de toutes les améliorations.
+
 ## Prérequis
 
 - Windows 10 ou plus récent.
@@ -18,6 +20,16 @@ Le composant Stream Deck est facultatif. Il fournit le bouton qui commande Short
 
 L’UUID existant `fr.ethan.discord-shortcuts` est conservé pour que les touches déjà configurées restent associées au même composant.
 
+## État du bouton et reconnexion
+
+- **Hors ligne** : aucun état Discord valide n’est encore disponible. Une connexion ouverte ne suffit pas à afficher ON/OFF.
+- **ON/OFF** : état confirmé par Discord, également actualisé quand la bascule vient du hotkey ou du bouton Discord.
+- **…** : commande en attente. Les pressions supplémentaires sont ignorées jusqu’à confirmation ou expiration, afin d’éviter plusieurs bascules involontaires.
+
+La liaison est contrôlée périodiquement. Après une coupure, le compagnon abandonne les connexions bloquées et Discord tente de se reconnecter. Une commande sans réponse n’est pas renvoyée automatiquement : le compagnon demande l’état actuel. Après un changement de page ou de profil Stream Deck, les touches qui réapparaissent reçoivent également l’état courant. Un échec d’affichage est réessayé tant que la touche est visible.
+
+Les images et titres personnalisés dans Stream Deck gardent la priorité. Pour voir l’indicateur Hors ligne fourni, laisse la touche utiliser ses images et titres par défaut.
+
 ## Si l’état affiche Déconnecté
 
 Clique **Vérifier la connexion** dans les paramètres du plugin. Le test dure au maximum cinq secondes et affiche son heure et son résultat :
@@ -27,7 +39,7 @@ Clique **Vérifier la connexion** dans les paramètres du plugin. Le test dure a
 - **Connexion ouverte sans réponse compatible** : redémarre Stream Deck et vérifie qu’une ancienne copie ou un autre service n’utilise pas le même port.
 - **Connexion interrompue ou envoi échoué** : relance Stream Deck, puis réessaie le test.
 
-Le diagnostic ne change pas ON/OFF et ne commande pas la touche physique. Son succès vérifie la connexion et le message du compagnon ; le fonctionnement du bouton physique doit ensuite être essayé. Le compagnon 0.1.2.0 existant reste compatible : cette mise à jour ne demande pas de le réinstaller.
+Le diagnostic ne change pas ON/OFF et ne commande pas la touche physique. Son succès vérifie la connexion et le message du compagnon ; le fonctionnement du bouton physique doit ensuite être essayé. Le compagnon 0.1.3.0 distingue la connexion de diagnostic de la session de contrôle. Les versions précédentes restent compatibles avec les messages de base, mais la mise à jour des deux composants est nécessaire pour toutes les améliorations de fiabilité.
 
 - Vérifie que l’application Stream Deck est ouverte et le composant installé.
 - Vérifie que Discord et ShortcutToggle sont démarrés.
@@ -43,8 +55,19 @@ Le composant écoute sur `ws://127.0.0.1:45873`. Discord se connecte comme clien
 
 - Stream Deck → Discord : `{"type":"toggle"}` ou `{"type":"getState"}`.
 - Discord → Stream Deck : `{"type":"state","disabled":false}` pour ON, `true` pour OFF.
+- Discord → Stream Deck : annonce optionnelle `{"type":"hello","role":"control","protocolVersion":1}`, ou `role:"diagnostic"` pour une vérification temporaire. Les anciens clients sans annonce sont reconnus comme clients de contrôle dès réception d’un état valide.
 
-Plusieurs clients Discord reliés au même composant reçoivent la commande de bascule. Pour un contrôle univoque, utilise une seule session cible.
+Le compagnon garde une session de contrôle stable et lui envoie chaque bascule une seule fois. Si elle disparaît, une autre session ayant confirmé son état peut prendre le relais. Les connexions de diagnostic ne pilotent pas le bouton. Pour choisir sans ambiguïté le Discord ciblé, utilise une seule session de contrôle.
+
+Le compagnon demande régulièrement l’état et utilise les ping/pong WebSocket pour détecter les connexions rompues. La réponse attendue à une commande est limitée à 1,5 seconde ; l’état est ensuite redemandé. Une demande d’état sans réponse pendant cinq secondes entraîne l’abandon de la connexion.
+
+## Essai après installation
+
+1. Essaie la touche, le hotkey et le bouton Discord : leurs états doivent rester synchronisés.
+2. Ferme complètement Discord : la touche doit afficher Hors ligne. Relance Discord et attends le retour sur ON, état de démarrage du plugin.
+3. Ferme puis relance Stream Deck : la liaison doit reprendre automatiquement sans bascule supplémentaire.
+4. Change de page/profil puis reviens sur les touches Discord Shortcuts ; essaie aussi deux touches configurées avec la même action.
+5. Lance **Vérifier la connexion** sur ON puis OFF : le diagnostic doit conserver l’état.
 
 ## Construire l’installateur
 

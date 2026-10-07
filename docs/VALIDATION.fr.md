@@ -87,3 +87,15 @@ Essai conseillé : lancer la vérification avec Stream Deck ouvert, fermer Strea
 Les réponses réseau et notifications sont simulées dans ces tests. La collection publique réelle de publications GitHub a été consultée pour confirmer la présence des tags et préversions existants. La requête depuis le vrai client Discord, l’affichage/clic de la notification Vencord et la compilation complète de Vencord n’ont pas été testés pour 0.2.5.
 
 Essai conseillé après installation : cliquer sur **Vérifier les mises à jour** et vérifier l’état « Aucune version plus récente disponible » pour 0.2.5, puis essayer avec la vérification automatique désactivée. Une notification réelle de nouveauté pourra être vérifiée après la publication d’une version supérieure.
+
+## Mise à jour 0.2.6 — fiabilité du compagnon Stream Deck
+
+- Compilation du TSX complet et **238 vérifications simulées réussies** : les 203 précédentes et 35 vérifications du compagnon, de son affichage et de l’échange avec le module Vencord compilé.
+- Connexion sans état, état invalide, diagnostic séparé, session de contrôle stable, plusieurs boutons, disparition du client et reprise par un autre client valide.
+- Commande unique en attente, confirmation, expiration sans répétition de la commande, erreurs d’envoi, absence de pong, absence de réponse d’état, messages tardifs et arrêt.
+- Ordre des affichages asynchrones, disparition/réapparition d’une touche pendant un affichage, changements de page, erreur d’affichage et nouvel essai.
+- Reprise du serveur après indisponibilité du port, ignorance des événements d’un ancien serveur et conservation des identifiants du composant/de l’action.
+- Vérification sémantique TypeScript du plugin contre l’installation Vencord disponible et ses déclarations globales.
+- Vérification TypeScript du compagnon contre le SDK Elgato installé, construction Rollup et création de l’installateur **0.1.3.0** avec le CLI officiel Elgato, sans erreur.
+
+Les connexions, modules Discord et boutons sont simulés dans les tests de comportement. La construction des six composants Vencord n’a pas été relancée pour 0.2.6. L’installation Discord/Stream Deck active n’a pas été modifiée ; le test des touches physiques et du rendu dans les applications réelles reste à effectuer après la mise à jour des deux composants. Voir les étapes dans [STREAM_DECK.fr.md](STREAM_DECK.fr.md).

@@ -53,8 +53,9 @@ async function main(code) {
     message(probe, { type: 'getState' });
     assert.equal(api.getStreamDeckDiagnostics().result, 'ok');
     assert.equal(probe.readyState, 3);
-    assert.deepEqual(probe.messages.map(m => m.type), ['state']);
-    assert.equal(probe.messages[0].disabled, true);
+    assert.deepEqual(probe.messages.map(m => m.type), ['hello', 'state']);
+    assert.equal(probe.messages[0].role, 'diagnostic');
+    assert.equal(probe.messages[1].disabled, true);
     assert.equal(r.writes.length, writes);
     assert.deepEqual(Array.from(r.settings().selectedKeybindIds), selection);
     assert.match(text(r.render(api.ShortcutStatus)), /OFF/);

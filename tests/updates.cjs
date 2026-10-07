@@ -24,6 +24,9 @@ function button(r, label) {
 async function main(code) {
     let checks = 0;
     const r = createRuntime(code); await r.start(); const api = r.testApi;
+    const installed = api.PLUGIN_VERSION;
+    const [major, minor, patch] = installed.split('.').map(Number);
+    const newer = step => `${major}.${minor}.${patch + step}`;
     for (const [a, b, expected] of [
         ['0.2.10', '0.2.9', 1], ['v0.2.5', '0.2.5', 0], ['1.0.0', '0.99.99', 1],
         ['0.3.0-beta.2', '0.2.5', 1], ['0.3.0', '0.3.0-rc.1', 1],
@@ -36,23 +39,24 @@ async function main(code) {
 
     r.settings().updateNotificationsEnabled = false;
     await r.tick(30000); assert.equal(r.requests.length, 0);
-    assert.match(text(r.render(api.UpdateSettings)), /Version installée.*0\.2\.5/); checks++;
+    assert.ok(text(r.render(api.UpdateSettings)).includes(`Version installée :  ${installed}`)); checks++;
 
     r.toggle(); const selection = Array.from(r.settings().selectedKeybindIds), writes = r.writes.length;
-    const body = [release('v0.2.5'), release('v0.2.10', { prerelease: true,
+    const body = [release('v' + installed), release('v' + newer(5), { prerelease: true,
         html_url: 'https://untrusted.invalid/', name: '<script>ignored</script>' }),
-        release('v99.0.0', { draft: true }), release('v0.2.9'), release('latest')];
+        release('v99.0.0', { draft: true }), release('v' + newer(4)), release('latest')];
     // Ignore unpublished drafts and choose numeric version order, not list order.
     r.setFetchHandler(async () => response(body));
     await api.checkForUpdates();
     assert.equal(api.getUpdateCheckView().status, 'available');
-    assert.equal(api.getUpdateCheckView().latest.version, '0.2.10');
-    assert.match(text(r.render(api.UpdateSettings)), /Nouvelle version disponible.*0\.2\.10.*préversion/);
+    assert.equal(api.getUpdateCheckView().latest.version, newer(5));
+    assert.ok(text(r.render(api.UpdateSettings)).includes(newer(5)));
+    assert.match(text(r.render(api.UpdateSettings)), /Nouvelle version disponible.*préversion/);
     assert.equal(r.notifications.length, 1); checks++;
     button(r, 'Ouvrir le téléchargement').props.onClick(); r.notifications[0].onClick();
     assert.deepEqual(r.openedUrls, [
-        'https://github.com/Sheixo/ShortcutToggle/releases/tag/v0.2.10',
-        'https://github.com/Sheixo/ShortcutToggle/releases/tag/v0.2.10'
+        'https://github.com/Sheixo/ShortcutToggle/releases/tag/v' + newer(5),
+        'https://github.com/Sheixo/ShortcutToggle/releases/tag/v' + newer(5)
     ]);
     const request = r.requests[0];
     assert.equal(request.url, 'https://api.github.com/repos/Sheixo/ShortcutToggle/releases?per_page=100');
@@ -71,7 +75,7 @@ async function main(code) {
     await r.tick(20000); assert.equal(r.notifications.length, 1); checks++;
 
     // Current/older releases do not announce an update, even if the response is unordered.
-    for (const body of [[release('v0.2.5')], [release('v0.2.4')], [release('v0.2.5+newbuild')]]) {
+    for (const body of [[release('v' + installed)], [release('v0.0.1')], [release('v' + installed + '+newbuild')]]) {
         r.setFetchHandler(async () => response(body)); await api.checkForUpdates();
         assert.equal(api.getUpdateCheckView().status, 'current');
         assert.equal(r.notifications.length, 1);
@@ -115,7 +119,7 @@ async function main(code) {
     // Daily cadence and cached results persist across a plugin restart.
     const daily = createRuntime(code); await daily.start();
     const dailyApi = daily.testApi;
-    daily.setFetchHandler(async () => response([release('v0.2.6', { prerelease: true })]));
+    daily.setFetchHandler(async () => response([release('v' + newer(1), { prerelease: true })]));
     await daily.tick(19500); assert.equal(daily.requests.length, 1);
     assert.equal(daily.notifications.length, 1); checks++;
     await daily.tick(DAY - 1); assert.equal(daily.requests.length, 1);
@@ -124,9 +128,9 @@ async function main(code) {
     daily.plugin.stop(); await daily.start();
     await daily.tick(20000); assert.equal(daily.requests.length, 2);
     assert.equal(daily.notifications.length, 1); checks++;
-    daily.setFetchHandler(async () => response([release('v0.2.7')]));
+    daily.setFetchHandler(async () => response([release('v' + newer(2))]));
     await dailyApi.checkForUpdates(); assert.equal(daily.notifications.length, 2); checks++;
-    daily.setFetchHandler(async () => response([release('v0.2.6')]));
+    daily.setFetchHandler(async () => response([release('v' + newer(1))]));
     await dailyApi.checkForUpdates(); assert.equal(daily.notifications.length, 2); checks++;
     daily.settings().updateNotificationsEnabled = false;
     const before = daily.requests.length; await daily.tick(DAY * 2);
@@ -155,16 +159,16 @@ async function main(code) {
     lifecycle.settings().updateNotificationsEnabled = true;
     finish(response([release('v4.0.0')])); await tick;
     assert.equal(lifecycle.notifications.length, 0);
-    lifecycle.setFetchHandler(async () => response([release('v0.2.5')]));
+    lifecycle.setFetchHandler(async () => response([release('v' + installed)]));
     await lifecycle.tick(20000); assert.equal(lifecycle.requests.length, 2);
     assert.equal(lifecycle.testApi.getUpdateCheckView().status, 'current'); checks++;
-    lifecycle.settings().latestUpdateRelease = { tag: 'v0.2.8', prerelease: false, url: 'https://untrusted.invalid/' };
+    lifecycle.settings().latestUpdateRelease = { tag: 'v' + newer(3), prerelease: false, url: 'https://untrusted.invalid/' };
     lifecycle.settings().lastUpdateCheckAt = 99999999999999;
     lifecycle.settings().updateNotificationsEnabled = false;
     lifecycle.plugin.stop(); await lifecycle.start();
     assert.equal(lifecycle.testApi.getUpdateCheckView().checkedAt, null);
     button(lifecycle, 'Ouvrir le téléchargement').props.onClick();
-    assert.equal(lifecycle.openedUrls.at(-1), 'https://github.com/Sheixo/ShortcutToggle/releases/tag/v0.2.8'); checks++;
+    assert.equal(lifecycle.openedUrls.at(-1), 'https://github.com/Sheixo/ShortcutToggle/releases/tag/v' + newer(3)); checks++;
     lifecycle.unmount(); lifecycle.plugin.stop();
     console.log(`${checks} update/version/notification checks: PASS`);
     return checks;

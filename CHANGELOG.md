@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.6 — 2026-10-07
+
+- Ship Discord Shortcuts companion 0.1.3.0 with confirmed-state synchronization, an offline key indicator and health checks for stalled connections.
+- Send a toggle to one stable control session, wait for its resulting state and ignore extra presses while pending; recover state after a timeout without replaying the toggle.
+- Distinguish diagnostic connections from control sessions while retaining compatibility with the existing state/getState/toggle messages.
+- Serialize key rendering, refresh keys after page changes and retry failed display updates; recover a companion listener when its local port becomes available.
+- Keep the existing companion/action UUIDs, Discord controls, recorded F13 hotkey, selection, favorite and author profile.
+- Pass complete TSX compilation and 238 simulated checks, semantic checking against Vencord, companion SDK type checking and Rollup build; package the installer with the official Elgato CLI.
+
 ## 0.2.5 — 2026-10-07
 
 - Add a settings card and Vencord notification for a newer published version, with a link to its GitHub release and manual installation instructions.
