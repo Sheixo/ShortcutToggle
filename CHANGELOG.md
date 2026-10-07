@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.7 — 2026-10-07
+
+- Ship Discord Shortcuts 0.1.4.0 with a property inspector displaying installed companion version, confirmed Discord state, manual/daily GitHub update checks and setup/source/support links.
+- Add project/support links to the manifest, English default metadata and French localization while preserving plugin/action identifiers.
+- Persist update-check preferences/results globally through Stream Deck; validate companion metadata and installer digests, retain results on errors and bound checks to ten seconds.
+- Keep GitHub installation manual and explain that native automatic installation and Marketplace placement require Elgato submission, approval and installation through Marketplace.
+- Prepare English listing text, original editable media and a submission guide; no Marketplace publication is claimed.
+- Pass full TSX compilation and 286 simulated checks, Vencord and companion type checks, Rollup construction and official Elgato installer packaging.
+
 ## 0.2.6 — 2026-10-07
 
 - Ship Discord Shortcuts companion 0.1.3.0 with confirmed-state synchronization, an offline key indicator and health checks for stalled connections.

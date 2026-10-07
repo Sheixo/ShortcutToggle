@@ -4,7 +4,7 @@
 
 Active ou suspend les raccourcis personnalisés Discord depuis un bouton, un raccourci clavier ou un Stream Deck.
 
-Version **0.2.6** · Interface française · **Discord bureau sous Windows** · Plugin communautaire indépendant.
+Version **0.2.7** · Interface française · **Discord bureau sous Windows** · Plugin communautaire indépendant.
 
 ## Fonctionnalités
 
@@ -21,6 +21,7 @@ Version **0.2.6** · Interface française · **Discord bureau sous Windows** · 
 - Boutons Stream Deck synchronisés sur l’état confirmé par Discord, affichage Hors ligne après une coupure, contrôle périodique et protection contre les pressions répétées pendant une commande.
 - Diagnostic Stream Deck à la demande : vérification de la réponse du compagnon, résultat daté, dernier contact et aide en cas d’échec, sans basculer ON/OFF.
 - Notification d’une nouvelle version avec lien GitHub, vérification automatique quotidienne désactivable et bouton de vérification manuelle.
+- Panneau du compagnon Stream Deck avec sa propre version, recherche de mises à jour manuelle/quotidienne, état Discord et liens d’installation/GitHub/aide.
 
 ON permet aux raccourcis cochés de fonctionner. OFF suspend leurs actions. Les raccourcis non cochés restent disponibles.
 
@@ -59,13 +60,17 @@ Lors d’une installation neuve, les raccourcis personnalisés existants sont s�
 
 ## Stream Deck (facultatif)
 
-Consulte le [guide Stream Deck](docs/STREAM_DECK.fr.md). Le composant associé **Discord Shortcuts 0.1.3.0** est fourni dans `stream-deck/` et son installateur dans `releases/`. Pour bénéficier de toutes les améliorations 0.2.6, remplace `index.tsx` et installe ce nouveau compagnon. Les identifiants du composant et de son action sont conservés pour garder les touches déjà configurées.
+Consulte le [guide Stream Deck](docs/STREAM_DECK.fr.md). Le composant associé **Discord Shortcuts 0.1.4.0** est fourni dans `stream-deck/` et son installateur dans `releases/`. Mets à jour le fichier Vencord et le compagnon. Les identifiants du composant et de son action sont conservés pour garder les touches déjà configurées.
 
 Le plugin Vencord fonctionne également avec Stream Deck désactivé. La connexion, lorsqu’elle est activée, utilise uniquement `127.0.0.1:45873` et échange l’état ON/OFF et des commandes de bascule. Aucun compte Discord ni token n’est demandé.
 
 Le bouton **Vérifier la connexion** utilise une connexion temporaire pour attendre le message existant du compagnon et lui transmettre l’état actuel. Il distingue une connexion inaccessible, une réponse compatible absente, une interruption et un échec d’envoi. **Reconnecter** relance la liaison principale. Le nouveau compagnon distingue cette vérification de la session qui commande les boutons, pour éviter les changements d’état liés au diagnostic. Les versions précédentes restent compatibles avec les messages de base.
 
 Une touche montre **Hors ligne** jusqu’à réception d’un état valide. Les boutons visibles et ceux qui réapparaissent après un changement de page reprennent l’état confirmé. Pendant une bascule, les pressions supplémentaires sont ignorées jusqu’à confirmation ou expiration ; une commande dont la réponse manque n’est jamais renvoyée automatiquement. Les titres et images personnalisés dans Stream Deck gardent la priorité sur ceux du plugin.
+
+Sélectionne une touche **Discord Shortcuts** dans la fenêtre principale de Stream Deck pour ouvrir son nouveau panneau : version installée, recherche manuelle, option de vérification quotidienne, téléchargement et liens utiles. Dans **Préférences → Plug-ins**, le lien GitHub est aussi fourni par le manifeste. La recherche automatique est distincte de l’installation automatique : les versions GitHub se téléchargent et s’installent manuellement.
+
+Le compagnon reste dans **Locaux** tant qu’il est installé depuis GitHub. Les réglages de mise à jour natifs comme ceux de SuperMacro nécessitent une distribution via Elgato. Un [dossier de soumission Marketplace](marketplace/SOUMISSION.fr.md) est préparé ; le compte Maker Console, les essais réels, la soumission et l’approbation restent nécessaires.
 
 ## Notifications de mise à jour
 

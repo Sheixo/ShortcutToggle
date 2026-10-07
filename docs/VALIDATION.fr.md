@@ -99,3 +99,15 @@ Essai conseillé après installation : cliquer sur **Vérifier les mises à jour
 - Vérification TypeScript du compagnon contre le SDK Elgato installé, construction Rollup et création de l’installateur **0.1.3.0** avec le CLI officiel Elgato, sans erreur.
 
 Les connexions, modules Discord et boutons sont simulés dans les tests de comportement. La construction des six composants Vencord n’a pas été relancée pour 0.2.6. L’installation Discord/Stream Deck active n’a pas été modifiée ; le test des touches physiques et du rendu dans les applications réelles reste à effectuer après la mise à jour des deux composants. Voir les étapes dans [STREAM_DECK.fr.md](STREAM_DECK.fr.md).
+
+## Mise à jour 0.2.7 — panneau et distribution du compagnon
+
+- Compilation du TSX complet et **286 vérifications simulées réussies** : les 238 précédentes et 48 tests des versions du compagnon, du cache, des préférences, des métadonnées, des erreurs/délais/annulations et du protocole entre le panneau et le SDK.
+- Vérification sémantique du plugin avec Vencord, TypeScript du compagnon avec le SDK Elgato et construction Rollup réussies.
+- Validation officielle du manifeste, du lien GitHub et des fichiers du panneau ; création de l’installateur **0.1.4.0** réussie. L’installateur doit correspondre au dossier source compilé et au descripteur publié.
+- La version installée provient des informations fournies par Stream Deck, sans lecture du manifeste protégé à l’exécution. Le code ne modifie pas ses fichiers distribués et ne lance pas d’installation automatique.
+- Visuels Marketplace originaux en anglais produits aux dimensions demandées ; présentation et guide de soumission préparés.
+
+Les tests du panneau utilisent un DOM/WebSocket simulé. Le navigateur de l’application n’a pas permis de tester les aperçus locaux ; le rendu réel du panneau et du lien dans les préférences doit être vérifié dans Stream Deck. Aucune installation active ni compte Elgato n’a été modifié. Les visuels sont des illustrations de fonctions, pas une preuve d’utilisation réelle. Le produit n’est pas encore soumis ou approuvé par Marketplace.
+
+Essai conseillé : installer le compagnon, sélectionner une touche, vérifier la version 0.1.4.0 et les liens, rechercher les mises à jour, désactiver la recherche quotidienne et redémarrer Stream Deck pour confirmer sa conservation. Essayer aussi la reconnexion et les touches physiques décrites dans le guide.

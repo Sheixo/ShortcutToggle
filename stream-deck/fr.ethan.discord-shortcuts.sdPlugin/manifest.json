@@ -4,9 +4,9 @@
   "Name": "Discord Shortcuts",
   "Category": "Discord Shortcuts",
   "CategoryIcon": "imgs/category",
-  "Version": "0.1.3.0",
-  "Author": "ethanXsheixo",
-  "Description": "Active ou désactive les raccourcis Discord",
+  "Version": "0.1.4.0",
+  "Author": "Sheixo",
+  "Description": "Toggle selected Discord keybinds with ShortcutToggle for Vencord.",
   "CodePath": "bin/plugin.js",
   "SDKVersion": 3,
   "Nodejs": {
@@ -25,7 +25,7 @@
   "Actions": [
     {
       "UUID": "fr.ethan.discord-shortcuts.toggle",
-      "Name": "Raccourcis Clavier Discord",
+      "Name": "Toggle Discord Shortcuts",
       "Icon": "imgs/action",
       "Controllers": [
         "Keypad"
@@ -41,7 +41,11 @@
           "Image": "imgs/off",
           "Title": ""
         }
-      ]
+      ],
+      "PropertyInspectorPath": "ui/settings.html",
+      "Tooltip": "Enable or suspend the Discord keybinds selected in ShortcutToggle."
     }
-  ]
+  ],
+  "URL": "https://github.com/Sheixo/ShortcutToggle",
+  "SupportURL": "https://github.com/Sheixo/ShortcutToggle/issues"
 }

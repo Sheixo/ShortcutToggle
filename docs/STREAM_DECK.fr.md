@@ -2,7 +2,7 @@
 
 Le composant Stream Deck est facultatif. Il fournit le bouton qui commande ShortcutToggle et affiche son état ON/OFF.
 
-Cette publication associe **ShortcutToggle 0.2.6** à **Discord Shortcuts 0.1.3.0**. Mets à jour le fichier `index.tsx`, reconstruis Vencord, redémarre Discord et ouvre le nouvel installateur Stream Deck pour bénéficier de toutes les améliorations.
+Cette publication associe **ShortcutToggle 0.2.7** à **Discord Shortcuts 0.1.4.0**. Mets à jour le fichier `index.tsx`, reconstruis Vencord, redémarre Discord et ouvre le nouvel installateur Stream Deck pour bénéficier de toutes les améliorations.
 
 ## Prérequis
 
@@ -19,6 +19,22 @@ Cette publication associe **ShortcutToggle 0.2.6** à **Discord Shortcuts 0.1.3.
 5. L’état doit afficher **Connecté**. Presse la touche Stream Deck : le bouton Discord et le statut ON/OFF doivent changer ensemble.
 
 L’UUID existant `fr.ethan.discord-shortcuts` est conservé pour que les touches déjà configurées restent associées au même composant.
+
+## Version, mises à jour et liens utiles
+
+Dans la fenêtre principale de Stream Deck, sélectionne une touche **Discord Shortcuts**. Son panneau affiche :
+
+- La version du compagnon communiquée par Stream Deck (0.1.4.0 pour cette publication), distincte de la version Vencord.
+- L’état Discord ON/OFF ou Hors ligne, sans commande de bascule lors d’une vérification.
+- **Rechercher les mises à jour**, le dernier contrôle et, si une version supérieure existe, **Télécharger la mise à jour** / **Voir les nouveautés**.
+- **Vérifier automatiquement** : choix global mémorisé par Stream Deck, commun à toutes les touches. Premier essai environ vingt secondes après démarrage, puis un contrôle réussi par jour ; une erreur est réessayée après une heure. La recherche manuelle reste disponible si ce choix est désactivé.
+- GitHub, l’installation complète et l’aide.
+
+La recherche consulte les cent publications GitHub récentes et les métadonnées d’au plus dix publications qui fournissent un compagnon. Les brouillons et entrées incompatibles sont ignorés ; les préversions publiées sont incluses. La version du compagnon et les informations de son installateur doivent correspondre aux métadonnées de la publication. Les requêtes durent au maximum dix secondes au total et ne transmettent ni identifiant Discord, token, cookies ni données de profil Stream Deck.
+
+Une erreur conserve le dernier résultat connu. Une mise à jour de Vencord seule ne sera pas présentée comme une nouvelle version du compagnon. Les liens sont construits uniquement vers Sheixo/ShortcutToggle ; l’interface ne peut pas fournir une URL arbitraire au plugin.
+
+Dans **Préférences → Plug-ins**, Stream Deck affiche déjà la version et utilisera le lien GitHub du manifeste. Les contrôles de cette fenêtre sont gérés par Stream Deck. **L’installation depuis GitHub reste manuelle** : télécharger puis ouvrir le fichier `.streamDeckPlugin`. Les options natives de mise à jour automatique et la sortie de **Locaux** nécessitent une publication approuvée puis une installation via Marketplace. Voir le [dossier préparé](../marketplace/SOUMISSION.fr.md).
 
 ## État du bouton et reconnexion
 
@@ -39,7 +55,7 @@ Clique **Vérifier la connexion** dans les paramètres du plugin. Le test dure a
 - **Connexion ouverte sans réponse compatible** : redémarre Stream Deck et vérifie qu’une ancienne copie ou un autre service n’utilise pas le même port.
 - **Connexion interrompue ou envoi échoué** : relance Stream Deck, puis réessaie le test.
 
-Le diagnostic ne change pas ON/OFF et ne commande pas la touche physique. Son succès vérifie la connexion et le message du compagnon ; le fonctionnement du bouton physique doit ensuite être essayé. Le compagnon 0.1.3.0 distingue la connexion de diagnostic de la session de contrôle. Les versions précédentes restent compatibles avec les messages de base, mais la mise à jour des deux composants est nécessaire pour toutes les améliorations de fiabilité.
+Le diagnostic ne change pas ON/OFF et ne commande pas la touche physique. Son succès vérifie la connexion et le message du compagnon ; le fonctionnement du bouton physique doit ensuite être essayé. Le compagnon 0.1.4.0 distingue la connexion de diagnostic de la session de contrôle. Les versions précédentes restent compatibles avec les messages de base, mais la mise à jour des deux composants est nécessaire pour toutes les améliorations de fiabilité.
 
 - Vérifie que l’application Stream Deck est ouverte et le composant installé.
 - Vérifie que Discord et ShortcutToggle sont démarrés.
@@ -74,3 +90,5 @@ Le compagnon demande régulièrement l’état et utilise les ping/pong WebSocke
 Le [CLI officiel Elgato](https://docs.elgato.com/streamdeck/cli/commands/pack/) valide le manifeste et produit le fichier `.streamDeckPlugin`.
 
 Le dossier du composant est `stream-deck/fr.ethan.discord-shortcuts.sdPlugin`. Son code source est dans `stream-deck/src`. Les fichiers de journal ne sont pas inclus dans le dépôt ni dans l’installateur fourni.
+
+Après chaque nouvelle construction, produire le descripteur avec `node scripts/prepare-companion-release.cjs v0.2.7` (adapter le tag), puis joindre **streamdeck-update.json** avec l’installateur dans la même publication GitHub. Les vérifications du compagnon se basent sur ce fichier et les tailles/empreintes des assets GitHub. Le manifeste distribué n’est pas lu ou modifié à l’exécution, pour rester compatible avec la protection de fichiers Marketplace.

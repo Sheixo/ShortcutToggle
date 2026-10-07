@@ -1,0 +1,8 @@
+{
+  "Name": "Discord Shortcuts",
+  "Description": "Active ou désactive les raccourcis Discord avec ShortcutToggle pour Vencord.",
+  "fr.ethan.discord-shortcuts.toggle": {
+    "Name": "Raccourcis Clavier Discord",
+    "Tooltip": "Active ou suspend les raccourcis sélectionnés dans ShortcutToggle."
+  }
+}

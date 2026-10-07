@@ -9,7 +9,7 @@ import ErrorBoundary from "@components/ErrorBoundary";
 import definePlugin, { OptionType } from "@utils/types";
 import { findByProps, findComponentByCodeLazy } from "@webpack";
 import { Checkbox, showToast, useEffect, useState } from "@webpack/common";
-const PLUGIN_VERSION = "0.2.6";
+const PLUGIN_VERSION = "0.2.7";
 const UPDATE_API_URL = "https://api.github.com/repos/Sheixo/ShortcutToggle/releases?per_page=100";
 const UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const UPDATE_RETRY_INTERVAL = 60 * 60 * 1000;

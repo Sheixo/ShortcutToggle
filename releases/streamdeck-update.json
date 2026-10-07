@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "pluginUUID": "fr.ethan.discord-shortcuts",
+  "version": "0.1.4.0",
+  "releaseTag": "v0.2.7",
+  "installer": "fr.ethan.discord-shortcuts.streamDeckPlugin",
+  "size": 1937601,
+  "sha256": "043850c99d44977418257bb9f11e61e3287ebe32463e7d4bd839e5a41a85c1d2"
+}

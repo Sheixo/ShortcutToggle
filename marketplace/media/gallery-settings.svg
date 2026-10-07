@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="960" viewBox="0 0 1920 960">
+<rect width="1920" height="960" fill="#151923"/>
+<text x="110" y="84" dominant-baseline="text-before-edge" fill="#8facff" font-family="Segoe UI,Arial,sans-serif" font-size="25" font-weight="700">DISCORD SHORTCUTS</text>
+<text x="110" y="158" dominant-baseline="text-before-edge" fill="#f5f7ff" font-family="Segoe UI,Arial,sans-serif" font-size="62" font-weight="700">Version and setup, in one place.</text>
+<text x="110" y="250" dominant-baseline="text-before-edge" fill="#aebbd2" font-family="Segoe UI,Arial,sans-serif" font-size="30" font-weight="400">Select the action in Stream Deck to open its settings.</text>
+<line x1="110" y1="856" x2="1810" y2="856" stroke="#354159" stroke-width="2"/>
+<text x="110" y="889" dominant-baseline="text-before-edge" fill="#aebbd2" font-family="Segoe UI,Arial,sans-serif" font-size="23" font-weight="400">Stream Deck companion · Requires ShortcutToggle for Vencord · Windows</text>
+<rect x="110" y="360" width="895" height="428" rx="28" fill="#212838" stroke="#354159" stroke-width="2"/>
+<text x="152" y="402" dominant-baseline="text-before-edge" fill="#aebbd2" font-family="Segoe UI,Arial,sans-serif" font-size="29" font-weight="400">Installed version</text>
+<text x="774" y="402" dominant-baseline="text-before-edge" fill="#f5f7ff" font-family="Segoe UI,Arial,sans-serif" font-size="29" font-weight="700">0.1.4.0</text>
+<rect x="152" y="475" width="808" height="83" rx="8" fill="#34435d" stroke="#354159" stroke-width="2"/>
+<text x="316" y="495" dominant-baseline="text-before-edge" fill="#f5f7ff" font-family="Segoe UI,Arial,sans-serif" font-size="34" font-weight="700">Check for updates</text>
+<rect x="156" y="610" width="30" height="30" rx="5" fill="#8facff" stroke="none" stroke-width="2"/>
+<text x="210" y="602" dominant-baseline="text-before-edge" fill="#f5f7ff" font-family="Segoe UI,Arial,sans-serif" font-size="31" font-weight="400">Check automatically</text>
+<text x="152" y="690" dominant-baseline="text-before-edge" fill="#aebbd2" font-family="Segoe UI,Arial,sans-serif" font-size="24" font-weight="400">Daily checks · Installation from GitHub is manual</text>
+<text x="1110" y="390" dominant-baseline="text-before-edge" fill="#8facff" font-family="Segoe UI,Arial,sans-serif" font-size="35" font-weight="700">GitHub project</text>
+<text x="1110" y="448" dominant-baseline="text-before-edge" fill="#aebbd2" font-family="Segoe UI,Arial,sans-serif" font-size="25" font-weight="400">Source code and downloads</text>
+<text x="1110" y="532" dominant-baseline="text-before-edge" fill="#8facff" font-family="Segoe UI,Arial,sans-serif" font-size="35" font-weight="700">Installation guide</text>
+<text x="1110" y="590" dominant-baseline="text-before-edge" fill="#aebbd2" font-family="Segoe UI,Arial,sans-serif" font-size="25" font-weight="400">Set up Discord and Stream Deck</text>
+<text x="1110" y="674" dominant-baseline="text-before-edge" fill="#8facff" font-family="Segoe UI,Arial,sans-serif" font-size="35" font-weight="700">Help and feedback</text>
+<text x="1110" y="732" dominant-baseline="text-before-edge" fill="#aebbd2" font-family="Segoe UI,Arial,sans-serif" font-size="25" font-weight="400">Report a problem or request a feature</text>
+</svg>

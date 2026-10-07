@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src ws://127.0.0.1:*; base-uri 'none'; form-action 'none'">
+    <title>Discord Shortcuts — Réglages</title>
+    <link rel="stylesheet" href="settings.css">
+    <script src="settings.js" defer></script>
+</head>
+<body>
+<main>
+    <header><img src="../imgs/plugin.png" alt="" width="38" height="38"><div><h1>Discord Shortcuts</h1><p>Compagnon de ShortcutToggle</p></div></header>
+    <section aria-label="Connexion Discord"><span class="label">Discord</span><strong id="connection" class="badge">En attente…</strong></section>
+    <section class="updates" aria-label="Mises à jour">
+        <div class="row"><span class="label">Version installée</span><strong id="version">—</strong></div>
+        <button id="check" type="button" disabled>Rechercher les mises à jour</button>
+        <label class="check"><input id="automatic" type="checkbox" checked disabled>Vérifier automatiquement</label>
+        <p class="hint">Une vérification par jour, commune à toutes les touches.</p>
+        <p id="update-status" role="status" aria-live="polite">Connexion au compagnon…</p>
+        <p id="checked-at" class="hint"></p>
+        <div id="download-row" hidden><button id="download" type="button">Télécharger la mise à jour</button><button id="release" type="button" class="text-button">Voir les nouveautés</button></div>
+        <details><summary>Installation automatique</summary><p class="hint">Les mises à jour automatiques de Stream Deck seront disponibles après publication et installation via Marketplace. Pour la version GitHub, télécharge puis ouvre l’installateur.</p></details>
+    </section>
+    <section aria-label="Liens utiles"><h2>Liens utiles</h2><nav><a href="https://github.com/Sheixo/ShortcutToggle" data-link="github">GitHub du projet</a><a href="https://github.com/Sheixo/ShortcutToggle/blob/main/docs/STREAM_DECK.fr.md" data-link="installation">Installation complète</a><a href="https://github.com/Sheixo/ShortcutToggle/issues" data-link="support">Aide et signalement d’un problème</a></nav></section>
+    <p class="hint">Dans Discord, active « Activer la connexion Stream Deck » dans ShortcutToggle.</p>
+</main>
+</body>
+</html>

@@ -11,7 +11,8 @@ async function run() {
         + await require('./conflicts.cjs')(result.code)
         + await require('./streamdeck.cjs')(result.code)
         + await require('./updates.cjs')(result.code)
-        + await require('./companion.cjs')(result.code);
+        + await require('./companion.cjs')(result.code)
+        + await require('./companion-settings.cjs')();
     console.log(`Full TSX compilation and ${total} simulated checks passed.`);
 }
 run().catch(error => { console.error(error); process.exitCode = 1; });

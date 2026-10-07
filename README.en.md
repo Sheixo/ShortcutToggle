@@ -4,7 +4,7 @@
 
 Enable or suspend selected custom Discord keybinds using a Discord button, a global keyboard shortcut, or a Stream Deck.
 
-**Version 0.2.6** · French settings interface · **Discord desktop on Windows** · Independent community plugin.
+**Version 0.2.7** · French settings interface · **Discord desktop on Windows** · Independent community plugin.
 
 ## Features
 
@@ -21,6 +21,7 @@ Enable or suspend selected custom Discord keybinds using a Discord button, a glo
 - Stream Deck keys reflect confirmed Discord state, show an offline indicator after a connection loss, check connection health periodically and ignore extra presses while a command is pending.
 - On-demand Stream Deck diagnostics: check the companion's reply, show the check time and last contact, and display troubleshooting steps without toggling ON/OFF.
 - Notify about a newer version with a GitHub link, optional daily automatic checks and a manual check button.
+- Companion settings panel with its own installed version, manual/optional daily update checks, Discord state and setup/source/support links.
 
 ON allows selected keybinds to run. OFF suppresses their actions. Unchecked keybinds remain available.
 
@@ -52,13 +53,17 @@ Comparison uses complete chords found in Discord’s keybind store, independentl
 
 ## Optional Stream Deck integration
 
-See the [English Stream Deck guide](docs/STREAM_DECK.en.md). The companion **Discord Shortcuts 0.1.3.0** source and assets are under `stream-deck/`; its installer is under `releases/`. Update both `index.tsx` and the companion for all 0.2.6 improvements. Plugin and action identifiers are unchanged to retain existing configured keys.
+See the [English Stream Deck guide](docs/STREAM_DECK.en.md). The companion **Discord Shortcuts 0.1.4.0** source and assets are under `stream-deck/`; its installer is under `releases/`. Update both `index.tsx` and the companion. Plugin and action identifiers are unchanged to retain existing configured keys.
 
 The connection uses loopback `127.0.0.1:45873` only, exchanging ON/OFF state and toggle commands. No Discord account or token is requested. Keyboard and Discord-button controls work without the integration.
 
 **Vérifier la connexion** opens a temporary connection, waits for the companion's existing message and sends the current state. It distinguishes unavailable transport, a missing compatible reply, interruption and send failure. **Reconnecter** restarts the main link. The new companion separates diagnostics from the session that controls the keys to prevent diagnostics from changing their displayed state. Previous versions remain compatible with the basic messages.
 
 Keys show **Hors ligne** until valid state arrives. Visible keys and keys that reappear after a page change reflect confirmed state. Additional presses are ignored while a toggle awaits confirmation or timeout; a command with a missing reply is never replayed automatically. Custom images and titles configured in Stream Deck take precedence over plugin defaults.
+
+Select a Discord Shortcuts key in the main Stream Deck window to open its settings panel. It shows the installed companion version, manual checking, optional daily checks, a download button and useful links. The manifest also supplies a GitHub link in Preferences → Plugins. GitHub installation remains manual; automatic checking does not install software.
+
+A GitHub-installed companion stays in the Local section. Native update management requires Elgato distribution. A [Marketplace submission folder](marketplace/LISTING.en.md) is included, but a Maker Console account, real application tests, submission and approval are still required.
 
 ## Update notifications
 

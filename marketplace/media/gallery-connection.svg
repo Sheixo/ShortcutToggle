@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="960" viewBox="0 0 1920 960">
+<rect width="1920" height="960" fill="#151923"/>
+<text x="110" y="84" dominant-baseline="text-before-edge" fill="#8facff" font-family="Segoe UI,Arial,sans-serif" font-size="25" font-weight="700">DISCORD SHORTCUTS</text>
+<text x="110" y="158" dominant-baseline="text-before-edge" fill="#f5f7ff" font-family="Segoe UI,Arial,sans-serif" font-size="62" font-weight="700">Stay in sync.</text>
+<text x="110" y="250" dominant-baseline="text-before-edge" fill="#aebbd2" font-family="Segoe UI,Arial,sans-serif" font-size="30" font-weight="400">Confirmed state, automatic reconnection and a clear offline indicator.</text>
+<line x1="110" y1="856" x2="1810" y2="856" stroke="#354159" stroke-width="2"/>
+<text x="110" y="889" dominant-baseline="text-before-edge" fill="#aebbd2" font-family="Segoe UI,Arial,sans-serif" font-size="23" font-weight="400">Stream Deck companion · Requires ShortcutToggle for Vencord · Windows</text>
+<rect x="110" y="364" width="530" height="393" rx="30" fill="#212838" stroke="#354159" stroke-width="2"/>
+<rect x="276" y="425" width="198.0" height="126.0" rx="16.2" fill="none" stroke="#8ce5b0" stroke-width="6"/>
+<rect x="298.5" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#8ce5b0" stroke="none" stroke-width="2"/>
+<rect x="331.8" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#8ce5b0" stroke="none" stroke-width="2"/>
+<rect x="365.1" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#8ce5b0" stroke="none" stroke-width="2"/>
+<rect x="398.4" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#8ce5b0" stroke="none" stroke-width="2"/>
+<rect x="431.70000000000005" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#8ce5b0" stroke="none" stroke-width="2"/>
+<rect x="298.5" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#8ce5b0" stroke="none" stroke-width="2"/>
+<rect x="331.8" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#8ce5b0" stroke="none" stroke-width="2"/>
+<rect x="365.1" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#8ce5b0" stroke="none" stroke-width="2"/>
+<rect x="398.4" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#8ce5b0" stroke="none" stroke-width="2"/>
+<rect x="431.70000000000005" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#8ce5b0" stroke="none" stroke-width="2"/>
+<rect x="326.4" y="506.9" width="97.20000000000005" height="16.200000000000045" rx="2.7" fill="#8ce5b0" stroke="none" stroke-width="2"/>
+<text x="180" y="634" dominant-baseline="text-before-edge" fill="#8ce5b0" font-family="Segoe UI,Arial,sans-serif" font-size="52" font-weight="700">ON</text>
+<rect x="695" y="364" width="530" height="393" rx="30" fill="#212838" stroke="#354159" stroke-width="2"/>
+<rect x="861" y="425" width="198.0" height="126.0" rx="16.2" fill="none" stroke="#ff9baa" stroke-width="6"/>
+<rect x="883.5" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#ff9baa" stroke="none" stroke-width="2"/>
+<rect x="916.8" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#ff9baa" stroke="none" stroke-width="2"/>
+<rect x="950.1" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#ff9baa" stroke="none" stroke-width="2"/>
+<rect x="983.4" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#ff9baa" stroke="none" stroke-width="2"/>
+<rect x="1016.7" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#ff9baa" stroke="none" stroke-width="2"/>
+<rect x="883.5" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#ff9baa" stroke="none" stroke-width="2"/>
+<rect x="916.8" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#ff9baa" stroke="none" stroke-width="2"/>
+<rect x="950.1" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#ff9baa" stroke="none" stroke-width="2"/>
+<rect x="983.4" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#ff9baa" stroke="none" stroke-width="2"/>
+<rect x="1016.7" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#ff9baa" stroke="none" stroke-width="2"/>
+<rect x="911.4" y="506.9" width="97.20000000000005" height="16.200000000000045" rx="2.7" fill="#ff9baa" stroke="none" stroke-width="2"/>
+<text x="765" y="634" dominant-baseline="text-before-edge" fill="#ff9baa" font-family="Segoe UI,Arial,sans-serif" font-size="52" font-weight="700">OFF</text>
+<rect x="1280" y="364" width="530" height="393" rx="30" fill="#212838" stroke="#354159" stroke-width="2"/>
+<rect x="1446" y="425" width="198.0" height="126.0" rx="16.2" fill="none" stroke="#f3d194" stroke-width="6"/>
+<rect x="1468.5" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#f3d194" stroke="none" stroke-width="2"/>
+<rect x="1501.8" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#f3d194" stroke="none" stroke-width="2"/>
+<rect x="1535.1" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#f3d194" stroke="none" stroke-width="2"/>
+<rect x="1568.4" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#f3d194" stroke="none" stroke-width="2"/>
+<rect x="1601.7" y="447.5" width="18.0" height="16.19999999999999" rx="2.7" fill="#f3d194" stroke="none" stroke-width="2"/>
+<rect x="1468.5" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#f3d194" stroke="none" stroke-width="2"/>
+<rect x="1501.8" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#f3d194" stroke="none" stroke-width="2"/>
+<rect x="1535.1" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#f3d194" stroke="none" stroke-width="2"/>
+<rect x="1568.4" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#f3d194" stroke="none" stroke-width="2"/>
+<rect x="1601.7" y="476.3" width="18.0" height="16.19999999999999" rx="2.7" fill="#f3d194" stroke="none" stroke-width="2"/>
+<rect x="1496.4" y="506.9" width="97.19999999999982" height="16.200000000000045" rx="2.7" fill="#f3d194" stroke="none" stroke-width="2"/>
+<text x="1350" y="634" dominant-baseline="text-before-edge" fill="#f3d194" font-family="Segoe UI,Arial,sans-serif" font-size="52" font-weight="700">OFFLINE</text>
+</svg>
