@@ -411,6 +411,39 @@ function startShortcutRecording(owner: symbol) {
     releaseBlockedKeybinds();
     notifyShortcutRecording({ recording: true, preview: "", error: "" });
 }
+// Compare complete native chords independently of tuple order. Keep device type,
+// left/right modifiers and numpad keys distinct; ignore malformed chords.
+function nativeShortcutSignature(shortcut: unknown): string | null {
+    if (!Array.isArray(shortcut) || !shortcut.length)
+        return null;
+    const keys = new Set<string>();
+    for (const key of shortcut) {
+        if (!Array.isArray(key) || key.length !== 2
+            || key.some(value => typeof value !== "number" && (typeof value !== "string" || !value.trim())))
+            return null;
+        const [type, code] = key.map(Number);
+        if (!Number.isInteger(type) || type < 0 || !Number.isInteger(code) || code <= 0)
+            return null;
+        keys.add(`${type}:${code}`);
+    }
+    return [...keys].sort().join("|");
+}
+function getDiscordShortcutBindings(): any[] {
+    return Object.values(getDiscordState()).filter(keybind => keybind
+        && Number.isFinite(Number(keybind.id)) && Number(keybind.id) !== TOGGLE_ID
+        && typeof keybind.action === "string" && keybind.action !== "UNASSIGNED"
+        && nativeShortcutSignature(keybind.shortcut) !== null);
+}
+function getShortcutConflicts(text: string): any[] {
+    const signature = nativeShortcutSignature(parseShortcut(text));
+    if (!signature)
+        return [];
+    return getDiscordShortcutBindings().filter(keybind => nativeShortcutSignature(keybind.shortcut) === signature)
+        .sort((a, b) => Number(Boolean(b.enabled)) - Number(Boolean(a.enabled))
+        || formatAction(a.action).localeCompare(formatAction(b.action), "fr")
+        || String(a.id).localeCompare(String(b.id)));
+}
+let observedConflictSnapshot = "";
 const UI = {
     card: { padding: 18, borderRadius: 12, border: "1px solid var(--background-modifier-accent)", background: "var(--background-secondary)", minWidth: 0 },
     row: { display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 },
@@ -474,6 +507,7 @@ function ShortcutStatus() {
 }
 function ShortcutRecorder() {
     const { toggleShortcut } = settings.use(["toggleShortcut"]);
+    useKeybindList();
     const [owner] = useState(() => Symbol("ShortcutRecorder"));
     const [view, setView] = useState(shortcutRecordingView);
     useEffect(() => {
@@ -485,6 +519,8 @@ function ShortcutRecorder() {
         };
     }, [owner]);
     const current = registeredShortcut || String(toggleShortcut ?? "F13");
+    const checkedShortcut = view.recording ? (view.error ? "" : view.preview) : current;
+    const conflicts = getShortcutConflicts(checkedShortcut);
     return <section style={UI.card} aria-label="Raccourci global">
         <div style={UI.row}>
             <div><h3 style={UI.title}>Raccourci global</h3><p style={UI.muted}>Bascule ON/OFF depuis le clavier, même hors de Discord.</p></div>
@@ -501,6 +537,21 @@ function ShortcutRecorder() {
             <p style={{ ...UI.muted, color: view.error ? "var(--text-danger)" : "var(--text-muted)" }}>{view.error || (view.recording
             ? (view.preview ? "Relâche toutes les touches pour enregistrer. Échap pour annuler." : "Appuie sur une touche ou une combinaison. Échap pour annuler.")
             : "Le raccourci est appliqué dès que tu relâches les touches.")}</p>
+        </div>
+        <div role="status" aria-live="polite" aria-atomic="true" aria-label="Conflits du raccourci">
+            {conflicts.length > 0 && <div style={{ marginTop: 12, padding: "12px 14px", borderRadius: 8,
+                border: "1px solid var(--status-warning, #f0b232)", background: "var(--background-primary)" }}>
+                <p style={{ ...UI.muted, marginTop: 0, color: "var(--text-normal)", fontWeight: 600 }}>
+                    ⚠ {conflicts.some(keybind => keybind.enabled) ? "Combinaison déjà utilisée dans Discord" : "Conflit possible si un raccourci Discord est réactivé"}
+                </p>
+                <ul style={{ margin: "8px 0", paddingLeft: 20, color: "var(--text-normal)", fontSize: 13, lineHeight: 1.6 }}>
+                    {conflicts.map(keybind => <li key={String(keybind.id)}>{formatAction(keybind.action)}
+                        {!keybind.enabled && <span style={{ color: "var(--text-muted)" }}> — désactivé dans Discord</span>}
+                    </li>)}
+                </ul>
+                <p style={UI.muted}>Cette combinaison peut aussi déclencher ces actions lorsque leurs raccourcis sont actifs.
+                    Choisis une autre combinaison pour éviter le conflit. Tu peux conserver ce raccourci si cette utilisation est volontaire.</p>
+            </div>}
         </div>
     </section>;
 }
@@ -603,7 +654,7 @@ function ShortcutSettings() {
         <ShortcutRecorder />
         <KeybindSelector />
         <StreamDeckSettings />
-        <p style={{ ...UI.muted, marginTop: 0, textAlign: "center" }}>ShortcutToggle 0.2.2 · Discord bureau · Windows</p>
+        <p style={{ ...UI.muted, marginTop: 0, textAlign: "center" }}>ShortcutToggle 0.2.3 · Discord bureau · Windows</p>
     </div>;
 }
 /* =========================================================
@@ -1113,7 +1164,11 @@ function updateKeybindSnapshot() {
     }
     const selection = getSelectedIds();
     let selectionChanged = false;
-    let listChanged = !baselineReady;
+    const conflictSnapshot = JSON.stringify(getDiscordShortcutBindings().map(keybind => [
+        String(keybind.id), nativeShortcutSignature(keybind.shortcut), keybind.action, Boolean(keybind.enabled)
+    ]).sort((a, b) => String(a[0]).localeCompare(String(b[0]))));
+    let listChanged = !baselineReady || conflictSnapshot !== observedConflictSnapshot;
+    observedConflictSnapshot = conflictSnapshot;
     if (baselineReady) {
         for (const [id, signature] of current) {
             if (!observedKeybinds.has(id)) {
@@ -1605,6 +1660,7 @@ export default definePlugin({
         recaptureAttempts.clear();
         observedKeybinds.clear();
         baselineReady = false;
+        observedConflictSnapshot = "";
         KeybindStore = null;
         KeybindActions = null;
         NativeInput = null;

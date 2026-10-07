@@ -76,6 +76,7 @@ function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = 
     let componentScope = null, hookIndex = 0;
     const componentHooks = new Map();
     const effectCleanup = new Map();
+    const hookUpdates = [];
     const useStateMock = initial => {
         if (!componentScope) return [typeof initial === 'function' ? initial() : initial, () => {}];
         const scope = componentScope;
@@ -83,7 +84,7 @@ function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = 
         if (!componentHooks.has(scope)) componentHooks.set(scope, []);
         const slots = componentHooks.get(scope);
         if (!(index in slots)) slots[index] = typeof initial === 'function' ? initial() : initial;
-        return [slots[index], next => { slots[index] = typeof next === 'function' ? next(slots[index]) : next; }];
+        return [slots[index], next => { slots[index] = typeof next === 'function' ? next(slots[index]) : next; hookUpdates.push(scope); }];
     };
     const useEffectMock = effect => {
         if (!componentScope) return;
@@ -162,6 +163,7 @@ function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = 
     async function start() { plugin.start(); await tick(500); await tick(); }
     return { plugin, recorder: context.module.exports.__test ?? context.module.exports.recorder, testApi: context.module.exports.__test, render(component) { componentScope = component.name; hookIndex = 0; const tree = component(); componentScope = null; return tree; }, unmount() { for (const cleanup of effectCleanup.values()) cleanup?.(); effectCleanup.clear(); componentHooks.clear(); }, document, window, failNextToggleRegister: () => { toggleRegisterFailures = 1; }, settings: () => settings.store, definition: () => definition, state, native, entries, originals, listeners, calls, writes, sockets, errors, start, tick, fire, press, toggle, latestState, put, releaseDeferred: () => deferred?.resolve(),
         remove(id) { native.inputEventUnregister(id); delete state[id]; emit(); },
+        hookUpdates,
         patch(id, values) { put({ ...state[id], ...values }); }
     };
 }

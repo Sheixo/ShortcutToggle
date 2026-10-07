@@ -4,13 +4,14 @@
 
 Active ou suspend les raccourcis personnalisés Discord depuis un bouton, un raccourci clavier ou un Stream Deck.
 
-Version **0.2.2** · Interface française · **Discord bureau sous Windows** · Plugin communautaire indépendant.
+Version **0.2.3** · Interface française · **Discord bureau sous Windows** · Plugin communautaire indépendant.
 
 ## Fonctionnalités
 
 - État ON/OFF visible dans les paramètres et bouton dans le panneau micro/casque de Discord.
 - Étoile Favori dans la première carte des paramètres : épingle ShortcutToggle en haut de la liste Vencord et mémorise ce choix.
 - Enregistrement du raccourci global par pression des touches, avec Échap pour annuler et réinitialisation à F13.
+- Alerte si la même combinaison est déjà affectée à une action Discord, pendant l’enregistrement et pour le raccourci enregistré.
 - Recherche par touche ou action, sélection par lots et compteurs.
 - Quand une recherche est active, les boutons de sélection agissent seulement sur ses résultats.
 - Synchronisation des ajouts, suppressions et changements de touche/action sans modifier ON/OFF.
@@ -22,7 +23,7 @@ ON permet aux raccourcis cochés de fonctionner. OFF suspend leurs actions. Les 
 
 ## Aperçu
 
-Ouvre [l’aperçu interactif](docs/apercu.html) dans ton navigateur après téléchargement. Il utilise les composants du plugin avec des données de démonstration, sans modifier Discord. Le changement de thème sert uniquement à cet aperçu.
+Ouvre [l’aperçu interactif](docs/apercu.html) dans ton navigateur après téléchargement. Il utilise les composants du plugin avec des données de démonstration, sans modifier Discord. Le changement de thème sert uniquement à cet aperçu. Enregistre G ou B pour essayer l’alerte de conflit.
 
 ## Installation du plugin Vencord
 
@@ -47,6 +48,8 @@ Lors d’une installation neuve, les raccourcis personnalisés existants sont s�
 - **Enregistrer un raccourci** : presse une touche ou une touche avec Ctrl, Maj, Alt ou Windows, puis relâche toutes les touches.
 - Les lettres, chiffres, touches F1 à F24, touches de navigation et principales touches du pavé numérique sont prises en charge. Les modificateurs droits sont distingués.
 - Échap, la perte de focus de la fenêtre ou la fermeture des paramètres annulent l’enregistrement.
+- L’alerte de conflit indique les actions Discord concernées, même si elles sont décochées dans ShortcutToggle. Un raccourci désactivé dans Discord est signalé comme un conflit possible s’il est réactivé. L’alerte se met à jour après ajout, suppression ou modification d’un raccourci ; elle permet de conserver la combinaison.
+- La comparaison porte sur les combinaisons complètes présentes dans le magasin de raccourcis Discord, indépendamment de l’ordre des touches. Elle distingue clavier/souris, modificateurs gauche/droit et pavé numérique. Elle ne détecte pas les raccourcis d’autres applications ni les raccourcis fixes absents de ce magasin.
 - Durant l’enregistrement, le hotkey global et les raccourcis personnalisés capturés sont suspendus pour éviter des actions involontaires.
 - La liste se met à jour automatiquement quand Discord change ses raccourcis.
 - La recherche ne change pas la sélection. Les boutons indiquent clairement s’ils concernent tout ou seulement les résultats.

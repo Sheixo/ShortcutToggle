@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.3 — 2026-10-07
+
+- Show an advisory conflict warning while recording and for the saved global hotkey, listing matching Discord actions.
+- Include unchecked bindings and mark disabled Discord bindings as potential conflicts when re-enabled.
+- Refresh warnings after keybind additions, deletions, key/action/enabled changes, and missed notifications covered by polling.
+- Compare complete native chords independently of tuple order, retaining device, modifier-side and numpad distinctions.
+- Preserve user choices, ON/OFF, native favorites, the Discord author profile and Stream Deck integration.
+- Add 48 conflict behavior/UI checks; complete TSX compilation and all 133 simulated checks pass.
+
 ## 0.2.2 — 2026-10-07
 
 - Add Vencord’s native Favorite button beside the ShortcutToggle title in its first settings card.

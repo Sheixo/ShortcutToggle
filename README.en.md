@@ -4,13 +4,14 @@
 
 Enable or suspend selected custom Discord keybinds using a Discord button, a global keyboard shortcut, or a Stream Deck.
 
-**Version 0.2.2** · French settings interface · **Discord desktop on Windows** · Independent community plugin.
+**Version 0.2.3** · French settings interface · **Discord desktop on Windows** · Independent community plugin.
 
 ## Features
 
 - Visible ON/OFF status and a button next to Discord’s microphone/headphone controls.
 - A favorite star in the first settings card pins ShortcutToggle to the top of Vencord’s plugin list and remembers that preference.
 - Record a global hotkey by pressing and releasing keys. Escape cancels; a reset button restores F13.
+- Warn when the same complete chord is already assigned to a Discord action, both during recording and for the saved hotkey.
 - Search keybinds by key or action, select them in bulk, and view selection counts.
 - Bulk actions affect only search results when a filter is active; their labels reflect this scope.
 - Add, delete, edit and select keybinds without changing the current ON/OFF state.
@@ -22,7 +23,7 @@ ON allows selected keybinds to run. OFF suppresses their actions. Unchecked keyb
 
 ## Preview
 
-After downloading the repository, open [the interactive preview](docs/apercu.html) in your browser. It uses the plugin’s components with demo data and does not modify Discord. Its theme button affects the preview only.
+After downloading the repository, open [the interactive preview](docs/apercu.html) in your browser. It uses the plugin’s components with demo data and does not modify Discord. Its theme button affects the preview only. Record G or B to try the conflict warning.
 
 ## Install the Vencord plugin
 
@@ -41,6 +42,10 @@ A fresh installation selects existing custom keybinds and leaves Stream Deck dis
 Press **Enregistrer un raccourci**, press a key with optional Ctrl, Shift, Alt or Windows modifiers, then release all keys. Letters, digits, F1–F24, navigation keys and common numeric-keypad keys are supported; right-side modifiers are distinguished.
 
 Escape, window blur, or closing settings cancels capture. The global hotkey and captured custom Discord actions are suppressed while recording. Changes to Discord keybinds update the list automatically.
+
+The conflict warning lists matching Discord actions, including bindings unchecked in ShortcutToggle. Disabled Discord bindings are marked as potential conflicts if re-enabled. Adding, deleting or editing a binding refreshes the warning. It is advisory and allows you to retain the chord.
+
+Comparison uses complete chords found in Discord’s keybind store, independently of tuple order. Keyboard/mouse devices, left/right modifiers and numeric-keypad keys remain distinct. Shortcuts from other applications and fixed Discord shortcuts absent from the store cannot be detected.
 
 ## Optional Stream Deck integration
 

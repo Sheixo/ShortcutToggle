@@ -46,3 +46,18 @@ La première carte des paramètres réutilise le composant FavoriteButton de Ven
 - Comparaison des fichiers préparés et publiés et vérification de chaque fichier du paquet ZIP.
 
 La construction des six composants Vencord mentionnée pour 0.2.0 n’a pas été relancée pour 0.2.2. L’affichage de l’étoile, le tri dans la vraie liste et la conservation après redémarrage de Discord restent à vérifier dans une session Discord réelle.
+
+## Mise à jour 0.2.3 — conflits du raccourci global
+
+L’utilisateur a confirmé l’affichage et le fonctionnement apparent de 0.2.2 dans Discord. Cette confirmation ne constitue pas un essai de 0.2.3.
+
+- Compilation du TSX complet et 133 vérifications simulées réussies : les 85 vérifications existantes et 48 nouvelles vérifications des conflits.
+- Combinaisons complètes, ordre différent des touches, alias, doublons, modificateurs gauche/droit, clavier/souris, pavé numérique et données malformées.
+- Raccourcis actifs, désactivés, décochés, plusieurs actions sur une combinaison et entrées gérées par Discord présentes dans son magasin.
+- Ajouts, suppressions, modifications de touche/action/activation dans les deux ordres de notification native/Discord ; actualisation du composant ouvert et vérification du secours périodique si une notification est manquée.
+- Alerte pendant l’enregistrement, enregistrement malgré un conflit, annulation, réinitialisation F13, retour au précédent raccourci après erreur native, fermeture des paramètres et arrêt/redémarrage simulé.
+- Maintien de ON/OFF, de la sélection et du favori ; la détection et l’affichage ne modifient aucun raccourci Discord pour résoudre un conflit.
+
+L’alerte compare les combinaisons présentes dans le magasin de raccourcis Discord. Elle ne couvre pas les raccourcis d’autres applications ni les raccourcis fixes absents de ce magasin. La vérification complète des types et la construction des six composants Vencord n’ont pas été relancées pour 0.2.3, car les dépendances de l’installation source initiale ne sont plus disponibles. Le rendu réel de l’alerte doit être vérifié dans Discord après installation.
+
+Essai conseillé : enregistrer temporairement la même touche qu’un raccourci Discord existant, vérifier son action dans l’alerte, changer ou supprimer ce raccourci Discord, puis revenir à F13. Essayer également une action désactivée dans Discord et une action décochée dans ShortcutToggle.
