@@ -625,12 +625,25 @@ function KeybindSelector() {
 }
 function StreamDeckSettings() {
     const { streamDeckEnabled } = settings.use(["streamDeckEnabled"]);
-    const [status, setStatus] = useState(streamDeckStatus);
+    const [connection, setConnection] = useState({ status: streamDeckStatus, diagnostics: getStreamDeckDiagnostics() });
     useEffect(() => {
-        streamDeckListeners.add(setStatus);
-        setStatus(streamDeckStatus);
-        return () => { streamDeckListeners.delete(setStatus); };
+        const update = (status: StreamDeckStatus, diagnostics = getStreamDeckDiagnostics()) => setConnection({ status, diagnostics });
+        streamDeckListeners.add(update);
+        update(streamDeckStatus);
+        return () => { streamDeckListeners.delete(update); };
     }, []);
+    const { status, diagnostics } = connection;
+    const diagnosticLabels: Record<StreamDeckCheckResult, string> = {
+        idle: "Vérifie que le compagnon répond depuis cet ordinateur.",
+        checking: "Vérification en cours…",
+        ok: "Le compagnon Stream Deck répond correctement.",
+        unavailable: "La connexion locale n’a pas pu être établie.",
+        noResponse: "La connexion s’est ouverte, mais aucune réponse compatible n’a été reçue.",
+        interrupted: "La connexion a été interrompue pendant la vérification.",
+        sendFailed: "Le compagnon répond, mais l’envoi de l’état a échoué."
+    };
+    const needsHelp = status === "disconnected" || ["unavailable", "noResponse", "interrupted", "sendFailed"].includes(diagnostics.result);
+    const contactTime = diagnostics.lastMessageAt ?? diagnostics.lastConnectedAt;
     const labels: Record<StreamDeckStatus, string> = { disabled: "Désactivé", connecting: "Connexion…", connected: "Connecté", disconnected: "Déconnecté" };
     return <section style={UI.card} aria-label="Connexion Stream Deck">
         <div style={UI.row}>
@@ -641,7 +654,36 @@ function StreamDeckSettings() {
             Activer la connexion Stream Deck
         </Checkbox></div>
         <p style={UI.muted}>{streamDeckEnabled ? "Le bouton Stream Deck suit le même état ON/OFF que Discord. La reconnexion est automatique." : "Le bouton Discord et le raccourci clavier fonctionnent indépendamment de Stream Deck."}</p>
-        {streamDeckEnabled && <button type="button" style={{ ...UI.button, marginTop: 12 }} onClick={reconnectStreamDeck}>Reconnecter</button>}
+        {streamDeckEnabled && <>
+            <div style={{ ...UI.row, justifyContent: "flex-start", marginTop: 12, gap: 8 }}>
+                <button type="button" style={UI.button} onClick={checkStreamDeckConnection} disabled={diagnostics.result === "checking" || !running}>
+                    {diagnostics.result === "checking" ? "Vérification…" : "Vérifier la connexion"}</button>
+                <button type="button" style={UI.button} onClick={reconnectStreamDeck}>Reconnecter</button>
+            </div>
+            <div aria-label="Diagnostic Stream Deck" role="status" aria-live="polite" aria-atomic="true" style={{ marginTop: 12 }}>
+                <p style={{ ...UI.muted, color: diagnostics.result === "ok" ? "var(--status-positive, #23a55a)" : needsHelp ? "var(--text-danger)" : "var(--text-muted)" }}>
+                    {diagnosticLabels[diagnostics.result]}</p>
+                {diagnostics.checkedAt !== null && <p style={UI.muted}>Dernière vérification : {new Date(diagnostics.checkedAt).toLocaleTimeString("fr-FR")}.</p>}
+                {contactTime !== null && <p style={UI.muted}>{diagnostics.lastMessageAt !== null ? "Dernier échange" : "Dernière connexion"} : {new Date(contactTime).toLocaleTimeString("fr-FR")}.</p>}
+                {diagnostics.attempts > 1 && <p style={UI.muted}>{diagnostics.attempts} tentatives de connexion depuis l’activation.</p>}
+                {diagnostics.result === "ok" && status !== "connected" && <p style={UI.muted}>Le compagnon est disponible. Clique sur « Reconnecter » pour rétablir la liaison avec Discord.</p>}
+            </div>
+            {needsHelp && <div style={{ marginTop: 12, padding: "12px 14px", borderRadius: 8,
+                    border: "1px solid var(--background-modifier-accent)", background: "var(--background-primary)" }}>
+                <p style={{ ...UI.muted, marginTop: 0, color: "var(--text-normal)", fontWeight: 600 }}>À vérifier</p>
+                <ol style={{ margin: "8px 0 0", paddingLeft: 20, color: "var(--text-normal)", fontSize: 13, lineHeight: 1.6 }}>
+                    <li>Ouvre l’application Stream Deck sur le même ordinateur que Discord.</li>
+                    <li>Vérifie que « Discord Shortcuts » est installé et ajoute son action « Raccourcis Clavier Discord » à une touche.</li>
+                    <li>Ferme complètement puis relance Stream Deck, et clique sur « Vérifier la connexion ».</li>
+                </ol>
+                <details style={{ marginTop: 10, fontSize: 13, color: "var(--text-muted)" }}>
+                    <summary style={{ cursor: "pointer" }}>Si le problème continue</summary>
+                    <p style={UI.muted}>{diagnostics.result === "noResponse"
+                    ? "Un service local répond sans le message attendu. Vérifie la version du compagnon et qu’une ancienne copie n’utilise pas déjà le même port."
+                    : "La connexion utilise uniquement cet ordinateur. Vérifie qu’une ancienne copie du compagnon n’utilise pas déjà le port local 45873. Les journaux de Stream Deck peuvent préciser la cause."}</p>
+                </details>
+            </div>}
+        </>}
         <details style={{ marginTop: 12, fontSize: 13, color: "var(--text-muted)" }}>
             <summary style={{ cursor: "pointer" }}>Configurer Stream Deck</summary>
             <p style={UI.muted}>Installe « Discord Shortcuts » dans l’application Stream Deck, ajoute son action à une touche, puis active la connexion ici. Le lien utilise uniquement ton ordinateur, sur le port 45873.</p>
@@ -654,7 +696,7 @@ function ShortcutSettings() {
         <ShortcutRecorder />
         <KeybindSelector />
         <StreamDeckSettings />
-        <p style={{ ...UI.muted, marginTop: 0, textAlign: "center" }}>ShortcutToggle 0.2.3 · Discord bureau · Windows</p>
+        <p style={{ ...UI.muted, marginTop: 0, textAlign: "center" }}>ShortcutToggle 0.2.4 · Discord bureau · Windows</p>
     </div>;
 }
 /* =========================================================
@@ -835,14 +877,108 @@ let streamDeckSocket: WebSocket | null = null;
 let streamDeckReconnect: ReturnType<typeof setTimeout> | null = null;
 let streamDeckStopping = false;
 let streamDeckStatus: StreamDeckStatus = "disabled";
-const streamDeckListeners = new Set<(status: StreamDeckStatus) => void>();
+type StreamDeckCheckResult = "idle" | "checking" | "ok" | "unavailable" | "noResponse" | "interrupted" | "sendFailed";
+type StreamDeckDiagnostics = {
+    result: StreamDeckCheckResult;
+    checkedAt: number | null;
+    attempts: number;
+    lastConnectedAt: number | null;
+    lastMessageAt: number | null;
+};
+const initialStreamDeckDiagnostics = (): StreamDeckDiagnostics => ({
+    result: "idle", checkedAt: null, attempts: 0, lastConnectedAt: null, lastMessageAt: null
+});
+let streamDeckDiagnostics = initialStreamDeckDiagnostics();
+let streamDeckConnectTimeout: ReturnType<typeof setTimeout> | null = null;
+let streamDeckCheck: {
+    socket: WebSocket | null;
+    timer: ReturnType<typeof setTimeout> | null;
+} | null = null;
+const streamDeckListeners = new Set<(status: StreamDeckStatus, diagnostics: StreamDeckDiagnostics) => void>();
+function getStreamDeckDiagnostics(): StreamDeckDiagnostics {
+    return { ...streamDeckDiagnostics };
+}
 function setStreamDeckStatus(status: StreamDeckStatus) {
     streamDeckStatus = status;
     for (const listener of streamDeckListeners) {
         try {
-            listener(status);
+            listener(status, getStreamDeckDiagnostics());
         }
         catch { }
+    }
+}
+function clearStreamDeckConnectTimeout() {
+    if (streamDeckConnectTimeout !== null)
+        clearTimeout(streamDeckConnectTimeout);
+    streamDeckConnectTimeout = null;
+}
+function cancelStreamDeckCheck() {
+    const check = streamDeckCheck;
+    streamDeckCheck = null;
+    if (!check)
+        return;
+    if (check.timer !== null)
+        clearTimeout(check.timer);
+    if (check.socket) {
+        check.socket.onopen = check.socket.onmessage = check.socket.onclose = check.socket.onerror = null;
+        try {
+            check.socket.close();
+        }
+        catch { }
+    }
+}
+// A separate, short-lived connection checks the existing companion's getState
+// handshake. It sends only the current state, never a toggle command.
+function checkStreamDeckConnection() {
+    if (!running || !settings.store.streamDeckEnabled || streamDeckDiagnostics.result === "checking")
+        return;
+    cancelStreamDeckCheck();
+    const token = generation;
+    const check = { socket: null as WebSocket | null, timer: null as ReturnType<typeof setTimeout> | null };
+    streamDeckCheck = check;
+    let opened = false;
+    const active = () => running && generation === token && settings.store.streamDeckEnabled && streamDeckCheck === check;
+    const finish = (result: StreamDeckCheckResult) => {
+        if (!active())
+            return;
+        streamDeckDiagnostics.result = result;
+        streamDeckDiagnostics.checkedAt = Date.now();
+        cancelStreamDeckCheck();
+        setStreamDeckStatus(streamDeckStatus);
+    };
+    streamDeckDiagnostics.result = "checking";
+    streamDeckDiagnostics.checkedAt = null;
+    setStreamDeckStatus(streamDeckStatus);
+    check.timer = setTimeout(() => finish(opened ? "noResponse" : "unavailable"), 5000);
+    try {
+        const socket = new WebSocket(STREAM_DECK_URL);
+        check.socket = socket;
+        socket.onopen = () => { if (active())
+            opened = true; };
+        socket.onmessage = event => {
+            if (!active() || socket.readyState !== WebSocket.OPEN)
+                return;
+            try {
+                const message = JSON.parse(String(event.data));
+                if (message?.type !== "getState")
+                    return;
+            }
+            catch {
+                return;
+            }
+            try {
+                socket.send(JSON.stringify({ type: "state", disabled }));
+                finish("ok");
+            }
+            catch {
+                finish("sendFailed");
+            }
+        };
+        socket.onerror = () => finish(opened ? "interrupted" : "unavailable");
+        socket.onclose = () => finish(opened ? "noResponse" : "unavailable");
+    }
+    catch {
+        finish("unavailable");
     }
 }
 function initialiseStreamDeckPreference() {
@@ -875,14 +1011,35 @@ function connectStreamDeck() {
         return;
     if (streamDeckSocket && (streamDeckSocket.readyState === WebSocket.OPEN || streamDeckSocket.readyState === WebSocket.CONNECTING))
         return;
+    streamDeckDiagnostics.attempts++;
     setStreamDeckStatus("connecting");
     try {
         const socket = new WebSocket(STREAM_DECK_URL);
         streamDeckSocket = socket;
         const active = () => running && !streamDeckStopping && settings.store.streamDeckEnabled && streamDeckSocket === socket;
+        const failed = () => {
+            if (!active())
+                return;
+            clearStreamDeckConnectTimeout();
+            streamDeckSocket = null;
+            socket.onopen = socket.onmessage = socket.onclose = socket.onerror = null;
+            try {
+                socket.close();
+            }
+            catch { }
+            setStreamDeckStatus("disconnected");
+            scheduleStreamDeckReconnect();
+        };
+        streamDeckConnectTimeout = setTimeout(() => {
+            streamDeckConnectTimeout = null;
+            if (active() && socket.readyState !== WebSocket.OPEN)
+                failed();
+        }, 5000);
         socket.onopen = () => {
             if (!active())
                 return;
+            clearStreamDeckConnectTimeout();
+            streamDeckDiagnostics.lastConnectedAt = Date.now();
             setStreamDeckStatus("connected");
             sendStreamDeckState();
         };
@@ -891,35 +1048,21 @@ function connectStreamDeck() {
                 return;
             try {
                 const message = JSON.parse(String(event.data));
-                if (message?.type === "toggle")
-                    toggleKeybinds();
-                else if (message?.type === "getState")
-                    sendStreamDeckState();
+                if (message?.type === "toggle" || message?.type === "getState") {
+                    streamDeckDiagnostics.lastMessageAt = Date.now();
+                    setStreamDeckStatus(streamDeckStatus);
+                    if (message.type === "toggle")
+                        toggleKeybinds();
+                    else
+                        sendStreamDeckState();
+                }
             }
             catch (error) {
                 console.warn("[ShortcutToggle] Message Stream Deck invalide", error);
             }
         };
-        socket.onclose = () => {
-            if (streamDeckSocket !== socket)
-                return;
-            streamDeckSocket = null;
-            if (!running || streamDeckStopping || !settings.store.streamDeckEnabled)
-                return;
-            setStreamDeckStatus("disconnected");
-            scheduleStreamDeckReconnect();
-        };
-        socket.onerror = () => {
-            if (!active())
-                return;
-            setStreamDeckStatus("disconnected");
-            try {
-                socket.close();
-            }
-            catch {
-                scheduleStreamDeckReconnect();
-            }
-        };
+        socket.onclose = failed;
+        socket.onerror = failed;
     }
     catch {
         setStreamDeckStatus("disconnected");
@@ -928,6 +1071,12 @@ function connectStreamDeck() {
 }
 function disconnectStreamDeck() {
     streamDeckStopping = true;
+    clearStreamDeckConnectTimeout();
+    cancelStreamDeckCheck();
+    streamDeckDiagnostics.result = "idle";
+    streamDeckDiagnostics.checkedAt = null;
+    if (!running || !settings.store.streamDeckEnabled)
+        streamDeckDiagnostics = initialStreamDeckDiagnostics();
     if (streamDeckReconnect)
         clearTimeout(streamDeckReconnect);
     streamDeckReconnect = null;

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.4 — 2026-10-07
+
+- Add an on-demand Stream Deck diagnostic using a temporary connection and the companion's existing getState message, without toggling ON/OFF or interrupting the main link.
+- Distinguish unavailable transport, a missing compatible reply, interruption and state-send failure; show check/contact times and troubleshooting steps.
+- Bound stalled background connections to five seconds before retrying and clean up diagnostic sockets/timers on disable, reconnect and stop.
+- Keep the existing companion 0.1.2.0 and installer unchanged; retain the keybind-conflict warning, favorite and author profile.
+- Add 26 diagnostic/lifecycle checks and a demo connection simulator. TSX compilation and all 159 simulated checks pass.
+
 ## 0.2.3 — 2026-10-07
 
 - Show an advisory conflict warning while recording and for the saved global hotkey, listing matching Discord actions.

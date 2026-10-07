@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const assert = require('node:assert/strict');
 
-function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = false, fresh = false, preference } = {}) {
+function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = false, fresh = false, preference, socketConnecting = false } = {}) {
     let clock = 0, nextTimer = 1, dispatching = false;
     const timers = new Map(), entries = new Map(), listeners = new Set(), calls = [], writes = [], sockets = [], errors = [];
     const state = {
@@ -12,6 +12,7 @@ function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = 
     };
     let deferred = null;
     let toggleRegisterFailures = 0;
+    let socketConstructorFailures = 0;
     class DomSurface {
         constructor() { this.handlers = new Map(); this.hidden = false; }
         addEventListener(type, fn) { if (!this.handlers.has(type)) this.handlers.set(type, new Set()); this.handlers.get(type).add(fn); }
@@ -114,7 +115,10 @@ function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = 
     class WebSocketMock {
         static OPEN = 1;
         static CONNECTING = 0;
-        constructor(url) { this.url = url; this.readyState = 1; this.messages = []; sockets.push(this); }
+        constructor(url) {
+            if (socketConstructorFailures) { socketConstructorFailures--; throw new Error('Simulated WebSocket constructor failure'); }
+            this.url = url; this.readyState = socketConnecting ? 0 : 1; this.messages = []; sockets.push(this);
+        }
         send(msg) { this.messages.push(JSON.parse(msg)); }
         close() { this.readyState = 3; this.onclose?.(); }
     }
@@ -164,6 +168,7 @@ function createRuntime(code, { order = 'storeFirst', selection = ['1'], delay = 
     return { plugin, recorder: context.module.exports.__test ?? context.module.exports.recorder, testApi: context.module.exports.__test, render(component) { componentScope = component.name; hookIndex = 0; const tree = component(); componentScope = null; return tree; }, unmount() { for (const cleanup of effectCleanup.values()) cleanup?.(); effectCleanup.clear(); componentHooks.clear(); }, document, window, failNextToggleRegister: () => { toggleRegisterFailures = 1; }, settings: () => settings.store, definition: () => definition, state, native, entries, originals, listeners, calls, writes, sockets, errors, start, tick, fire, press, toggle, latestState, put, releaseDeferred: () => deferred?.resolve(),
         remove(id) { native.inputEventUnregister(id); delete state[id]; emit(); },
         hookUpdates,
+        failNextSocket: () => { socketConstructorFailures = 1; },
         patch(id, values) { put({ ...state[id], ...values }); }
     };
 }

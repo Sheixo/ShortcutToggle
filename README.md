@@ -4,7 +4,7 @@
 
 Active ou suspend les raccourcis personnalisés Discord depuis un bouton, un raccourci clavier ou un Stream Deck.
 
-Version **0.2.3** · Interface française · **Discord bureau sous Windows** · Plugin communautaire indépendant.
+Version **0.2.4** · Interface française · **Discord bureau sous Windows** · Plugin communautaire indépendant.
 
 ## Fonctionnalités
 
@@ -18,6 +18,7 @@ Version **0.2.3** · Interface française · **Discord bureau sous Windows** · 
 - Les nouveaux raccourcis sont automatiquement sélectionnés. Les raccourcis décochés restent décochés après modification.
 - Un raccourci désactivé par Discord reste désactivé, y compris après un retour sur ON.
 - Connexion Stream Deck facultative avec état visible, reconnexion automatique et bouton Reconnecter.
+- Diagnostic Stream Deck à la demande : vérification de la réponse du compagnon, résultat daté, dernier contact et aide en cas d’échec, sans basculer ON/OFF.
 
 ON permet aux raccourcis cochés de fonctionner. OFF suspend leurs actions. Les raccourcis non cochés restent disponibles.
 
@@ -59,6 +60,8 @@ Lors d’une installation neuve, les raccourcis personnalisés existants sont s�
 Consulte le [guide Stream Deck](docs/STREAM_DECK.fr.md). Le composant associé **Discord Shortcuts 0.1.2.0** est fourni dans `stream-deck/` et son installateur dans `releases/`.
 
 Le plugin Vencord fonctionne également avec Stream Deck désactivé. La connexion, lorsqu’elle est activée, utilise uniquement `127.0.0.1:45873` et échange l’état ON/OFF et des commandes de bascule. Aucun compte Discord ni token n’est demandé.
+
+Le bouton **Vérifier la connexion** utilise une connexion temporaire pour attendre le message existant du compagnon et lui transmettre l’état actuel. Il distingue une connexion inaccessible, une réponse compatible absente, une interruption et un échec d’envoi. **Reconnecter** relance la liaison principale. Le compagnon 0.1.2.0 reste compatible et son installateur est inchangé.
 
 ## Développement et vérifications
 

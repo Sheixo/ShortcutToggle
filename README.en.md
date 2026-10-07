@@ -4,7 +4,7 @@
 
 Enable or suspend selected custom Discord keybinds using a Discord button, a global keyboard shortcut, or a Stream Deck.
 
-**Version 0.2.3** · French settings interface · **Discord desktop on Windows** · Independent community plugin.
+**Version 0.2.4** · French settings interface · **Discord desktop on Windows** · Independent community plugin.
 
 ## Features
 
@@ -18,6 +18,7 @@ Enable or suspend selected custom Discord keybinds using a Discord button, a glo
 - New keybinds are selected automatically. Editing an unchecked keybind does not select it again.
 - Keybinds disabled in Discord remain disabled, including when ShortcutToggle returns to ON.
 - Optional Stream Deck connection with visible status and automatic/manual reconnection.
+- On-demand Stream Deck diagnostics: check the companion's reply, show the check time and last contact, and display troubleshooting steps without toggling ON/OFF.
 
 ON allows selected keybinds to run. OFF suppresses their actions. Unchecked keybinds remain available.
 
@@ -52,6 +53,8 @@ Comparison uses complete chords found in Discord’s keybind store, independentl
 See the [English Stream Deck guide](docs/STREAM_DECK.en.md). The companion **Discord Shortcuts 0.1.2.0** source and assets are under `stream-deck/`; its installer is under `releases/`.
 
 The connection uses loopback `127.0.0.1:45873` only, exchanging ON/OFF state and toggle commands. No Discord account or token is requested. Keyboard and Discord-button controls work without the integration.
+
+**Vérifier la connexion** opens a temporary connection, waits for the companion's existing message and sends the current state. It distinguishes unavailable transport, a missing compatible reply, interruption and send failure. **Reconnecter** restarts the main link. Companion 0.1.2.0 remains compatible; its installer is unchanged.
 
 ## Development
 

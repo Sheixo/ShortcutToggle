@@ -20,6 +20,10 @@ The existing `fr.ethan.discord-shortcuts` UUID is retained so existing configure
 
 ## Troubleshooting
 
+Click **Vérifier la connexion** in the plugin settings. The check takes at most five seconds and reports its time and result: a compatible companion reply, unavailable transport, an open connection without a compatible reply, interruption or state-send failure. Follow the displayed troubleshooting steps. If the companion replies while the main link is disconnected, click **Reconnecter**.
+
+The check uses a temporary connection, sends only the current ON/OFF state and never sends a toggle command. It checks transport and the companion's existing message; test the physical button separately. Companion 0.1.2.0 is still compatible and does not need to be reinstalled for this update. Stalled background connections are abandoned after five seconds before retrying. The panel shows connection attempts and last contact time.
+
 Check that Stream Deck, Discord and both plugins are running. Click **Reconnecter**, or wait for automatic retry (every two seconds). Use one installation of the companion so it can listen on local port **45873**.
 
 No router port forwarding is needed: the server listens on loopback `127.0.0.1` only, on the same computer as Discord.

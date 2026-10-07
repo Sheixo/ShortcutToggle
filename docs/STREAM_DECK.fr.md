@@ -20,9 +20,19 @@ L’UUID existant `fr.ethan.discord-shortcuts` est conservé pour que les touche
 
 ## Si l’état affiche Déconnecté
 
+Clique **Vérifier la connexion** dans les paramètres du plugin. Le test dure au maximum cinq secondes et affiche son heure et son résultat :
+
+- **Le compagnon répond correctement** : le message attendu a été reçu et l’état ON/OFF a été envoyé. Si la liaison principale est encore déconnectée, clique **Reconnecter**.
+- **Connexion locale impossible** : vérifie que Stream Deck est ouvert sur le même ordinateur et que Discord Shortcuts est installé.
+- **Connexion ouverte sans réponse compatible** : redémarre Stream Deck et vérifie qu’une ancienne copie ou un autre service n’utilise pas le même port.
+- **Connexion interrompue ou envoi échoué** : relance Stream Deck, puis réessaie le test.
+
+Le diagnostic ne change pas ON/OFF et ne commande pas la touche physique. Son succès vérifie la connexion et le message du compagnon ; le fonctionnement du bouton physique doit ensuite être essayé. Le compagnon 0.1.2.0 existant reste compatible : cette mise à jour ne demande pas de le réinstaller.
+
 - Vérifie que l’application Stream Deck est ouverte et le composant installé.
 - Vérifie que Discord et ShortcutToggle sont démarrés.
 - Clique **Reconnecter**. Le plugin essaie aussi automatiquement toutes les deux secondes.
+- Une tentative de connexion bloquée est abandonnée au bout de cinq secondes avant un nouvel essai. Le panneau indique les tentatives depuis l’activation et l’heure du dernier contact.
 - Utilise une seule installation du composant par ordinateur : elle doit pouvoir écouter sur le port local **45873**.
 
 Ne configure pas de redirection de port sur ton routeur : la connexion utilise seulement `127.0.0.1`, sur l’ordinateur où Discord fonctionne.

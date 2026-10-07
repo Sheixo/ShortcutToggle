@@ -61,3 +61,16 @@ L’utilisateur a confirmé l’affichage et le fonctionnement apparent de 0.2.2
 L’alerte compare les combinaisons présentes dans le magasin de raccourcis Discord. Elle ne couvre pas les raccourcis d’autres applications ni les raccourcis fixes absents de ce magasin. La vérification complète des types et la construction des six composants Vencord n’ont pas été relancées pour 0.2.3, car les dépendances de l’installation source initiale ne sont plus disponibles. Le rendu réel de l’alerte doit être vérifié dans Discord après installation.
 
 Essai conseillé : enregistrer temporairement la même touche qu’un raccourci Discord existant, vérifier son action dans l’alerte, changer ou supprimer ce raccourci Discord, puis revenir à F13. Essayer également une action désactivée dans Discord et une action décochée dans ShortcutToggle.
+
+## Mise à jour 0.2.4 — diagnostic Stream Deck
+
+- Compilation du TSX complet et 159 vérifications simulées réussies : les 133 précédentes et 26 vérifications du diagnostic et de sa durée de vie.
+- Connexion temporaire distincte de la liaison principale, réponse getState reconnue, envoi de l’état actuel et absence de bascule ON/OFF pendant la vérification.
+- Connexion inaccessible, silence, messages invalides/inconnus, interruption, échec de création/envoi, délai de cinq secondes et résultat affiché dans les composants.
+- Protection contre les clics répétés et les événements tardifs, annulation lors de désactivation/reconnexion/arrêt, conservation de la sélection et nettoyage des ressources.
+- Reprise d’une connexion principale bloquée, reconnexion automatique après erreur même si close échoue, heures de contact et distinction entre succès du diagnostic et liaison principale déconnectée.
+- Compagnon Stream Deck et installateur 0.1.2.0 inchangés ; protocole local existant conservé. La démonstration permet de simuler un compagnon disponible, inaccessible ou sans réponse compatible.
+
+Ces tests utilisent des WebSockets et modules Discord simulés. La compilation complète de Vencord et le test du diagnostic dans Discord avec l’application Stream Deck réelle n’ont pas été effectués pour 0.2.4. Le diagnostic vérifie un échange compatible et l’envoi de l’état ; il ne confirme pas à lui seul le fonctionnement de la touche physique.
+
+Essai conseillé : lancer la vérification avec Stream Deck ouvert, fermer Stream Deck et refaire le test, puis le relancer et vérifier la reconnexion et le bouton physique. Le test doit conserver l’état ON/OFF et la sélection des raccourcis.
